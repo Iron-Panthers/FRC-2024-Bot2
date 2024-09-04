@@ -565,5 +565,8 @@ public final class Constants {
     public static final double AMP_TARGET_ANGLE = 0;
     public static final PathConstraints CONSTRAINTS =
         new PathConstraints(3, 3, Units.degreesToRadians(540), Units.degreesToRadians(720));
-  }
+    }
+          public static class Elevator{ //Placeholder elevator constant (update as needed)
+            public static final double GEAR_RATIO = 0;
+    }
 }
