@@ -28,7 +28,8 @@ public class IntakeSubsystem extends SubsystemBase {
     INTAKE(Intake.Modes.INTAKE),
     HOLD(Intake.Modes.HOLD),
     REVERSE(Intake.Modes.REVERSE),
-    SHOOT_SPEAKER(Intake.Modes.SHOOT_SPEAKER);
+    SHOOT_SPEAKER(Intake.Modes.SHOOT_SPEAKER),
+    SHOOT_AMP(Intake.Modes.SHOOT_AMP);
 
     public final IntakePowers modePowers;
 
