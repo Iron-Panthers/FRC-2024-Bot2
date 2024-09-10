@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.Modes;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
@@ -34,7 +34,7 @@ public class IntakeCommand extends Command {
   @Override
   public void initialize() {
     pivotSubsystem.setTargetDegrees(20);
-    intakeSubsystem.setIntakeMode(Modes.INTAKE);
+    intakeSubsystem.setIntakeMode(IntakeMode.INTAKE);
     shooterSubsystem.setShooterMode(ShooterMode.INTAKE);
   }
 
@@ -45,7 +45,7 @@ public class IntakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.setIntakeMode(IntakeSubsystem.Modes.HOLD);
+    intakeSubsystem.setIntakeMode(IntakeSubsystem.IntakeMode.HOLD);
     shooterSubsystem.setShooterMode(ShooterMode.RAMP_SPEAKER);
     shooterSubsystem.haltAccelerator();
   }
@@ -53,6 +53,6 @@ public class IntakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.isBeamBreakSensorTriggered();
+    return intakeSubsystem.isBeamBreakSensorTriggered();
   }
 }

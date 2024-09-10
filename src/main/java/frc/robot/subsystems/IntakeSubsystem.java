@@ -19,19 +19,20 @@ public class IntakeSubsystem extends SubsystemBase {
   private final TalonFX serializerMotor;
   private final ShuffleboardTab tab = Shuffleboard.getTab("Intake");
   private final DigitalInput noteSensor;
-  private Modes intakeMode;
-  private Modes pastMode;
+  private IntakeMode intakeMode;
+  private IntakeMode pastMode;
   private double timeSincePenaltyHazard;
   private boolean pastPenalty;
 
-  public enum Modes {
+  public enum IntakeMode {
     INTAKE(Intake.Modes.INTAKE),
     HOLD(Intake.Modes.HOLD),
-    REVERSE(Intake.Modes.REVERSE);
+    REVERSE(Intake.Modes.REVERSE),
+    SHOOT_SPEAKER(Intake.Modes.SHOOT_SPEAKER);
 
     public final IntakePowers modePowers;
 
-    private Modes(IntakePowers modePowers) {
+    private IntakeMode(IntakePowers modePowers) {
       this.modePowers = modePowers;
     }
   }
@@ -57,7 +58,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.setInverted(true);
     serializerMotor.setInverted(true);
 
-    intakeMode = Modes.HOLD;
+    intakeMode = IntakeMode.HOLD;
 
     timeSincePenaltyHazard = 7;
 
@@ -70,7 +71,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  public void setIntakeMode(Modes intakeMode) {
+  public void setIntakeMode(IntakeMode intakeMode) {
     this.intakeMode = intakeMode;
   }
 
@@ -79,7 +80,7 @@ public class IntakeSubsystem extends SubsystemBase {
     return !noteSensor.get();
   }
 
-  private Modes getIntakeMode() {
+  private IntakeMode getIntakeMode() {
     return intakeMode;
   }
 

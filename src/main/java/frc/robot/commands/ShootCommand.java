@@ -5,15 +5,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
+
 
 public class ShootCommand extends Command {
   private ShooterSubsystem shooterSubsystem;
+  private IntakeSubsystem intakeSubsystem;
 
   /** Creates a new ShootCommand. */
-  public ShootCommand(ShooterSubsystem shooterSubsystem) {
+  public ShootCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.intakeSubsystem = intakeSubsystem;
     this.shooterSubsystem = shooterSubsystem;
     addRequirements(shooterSubsystem);
   }
@@ -22,6 +27,7 @@ public class ShootCommand extends Command {
   @Override
   public void initialize() {
     shooterSubsystem.advanceToShootMode();
+    intakeSubsystem.setIntakeMode(IntakeMode.SHOOT_SPEAKER);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
