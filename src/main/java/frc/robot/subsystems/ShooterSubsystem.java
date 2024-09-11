@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Config;
+import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final TalonFX rollerMotorBottom;
   private final TalonFX rollerMotorTop;
   private final TalonFX acceleratorMotor;
+  private final TalonFX serializerMotor;
 
   private DigitalInput noteSensor;
 
@@ -64,11 +66,12 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
-  public record ShooterPowers(double roller, double topToBottomRatio, double accelerator) {
-    public ShooterPowers(double roller, double topToBottomRatio, double accelerator) {
+  public record ShooterPowers(double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
+    public ShooterPowers(double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
       this.roller = roller;
       this.topToBottomRatio = topToBottomRatio;
       this.accelerator = accelerator;
+      this.serializerSpeed = serializerSpeed;
     }
   }
 
@@ -76,6 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
     rollerMotorTop = new TalonFX(Shooter.Ports.TOP_SHOOTER_MOTOR_PORT);
     rollerMotorBottom = new TalonFX(Shooter.Ports.BOTTOM_SHOOTER_MOTOR_PORT);
     acceleratorMotor = new TalonFX(Shooter.Ports.ACCELERATOR_MOTOR_PORT);
+    serializerMotor = new TalonFX(Intake.Ports.SERIALIZER_MOTOR_PORT);
 
     noteSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
 
@@ -86,13 +90,16 @@ public class ShooterSubsystem extends SubsystemBase {
     rollerMotorTop.clearStickyFaults();
     acceleratorMotor.clearStickyFaults();
     rollerMotorBottom.clearStickyFaults();
+    serializerMotor.clearStickyFaults();
 
     rollerMotorBottom.setControl(new Follower(rollerMotorTop.getDeviceID(), false));
 
     acceleratorMotor.setInverted(true);
     rollerMotorBottom.setInverted(true);
     rollerMotorTop.setInverted(true);
+    serializerMotor.setInverted(true);
 
+    serializerMotor.setNeutralMode(NeutralModeValue.Brake);
     acceleratorMotor.setNeutralMode(NeutralModeValue.Brake);
     rollerMotorTop.setNeutralMode(NeutralModeValue.Coast);
     rollerMotorBottom.setNeutralMode(NeutralModeValue.Coast);
@@ -106,6 +113,8 @@ public class ShooterSubsystem extends SubsystemBase {
               "Top Roller Velocity (RPS)", () -> rollerMotorTop.getVelocity().getValueAsDouble())
           .withWidget(BuiltInWidgets.kGraph)
           .withSize(2, 1);
+      shooterTab.addDouble(
+          "Serializer motor voltage", () -> serializerMotor.getMotorVoltage().getValueAsDouble());
       shooterTab
           .addDouble(
               "Bottom Roller Velocity (RPS)",
@@ -118,26 +127,23 @@ public class ShooterSubsystem extends SubsystemBase {
           "Bottom roller amps", () -> rollerMotorBottom.getSupplyCurrent().getValueAsDouble());
       shooterTab.addString("mode", () -> shooterMode.toString());
 
-      ampRollerRatioEntry =
-          shooterTab
-              .add("DEBUG Amp Top to Bottom Roller Ratio", 1)
-              .withWidget(BuiltInWidgets.kNumberSlider)
-              .withProperties(Map.of("min", 0, "max", 1))
-              .withSize(3, 1)
-              .getEntry();
-      shooterSpeedEntry =
-          shooterTab
-              .add("DEBUG Shooter Velocity", .5)
-              .withWidget(BuiltInWidgets.kNumberSlider)
-              .withProperties(Map.of("min", 0, "max", 90))
-              .withSize(3, 1)
-              .getEntry();
-      useDebugControls =
-          shooterTab
-              .add("Use Debug Controls", false)
-              .withWidget(BuiltInWidgets.kToggleSwitch)
-              .withSize(2, 1)
-              .getEntry();
+      ampRollerRatioEntry = shooterTab
+          .add("DEBUG Amp Top to Bottom Roller Ratio", 1)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 0, "max", 1))
+          .withSize(3, 1)
+          .getEntry();
+      shooterSpeedEntry = shooterTab
+          .add("DEBUG Shooter Velocity", .5)
+          .withWidget(BuiltInWidgets.kNumberSlider)
+          .withProperties(Map.of("min", 0, "max", 90))
+          .withSize(3, 1)
+          .getEntry();
+      useDebugControls = shooterTab
+          .add("Use Debug Controls", false)
+          .withWidget(BuiltInWidgets.kToggleSwitch)
+          .withSize(2, 1)
+          .getEntry();
     }
   }
 
@@ -167,7 +173,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setVariableVelocity(double velocity) {
-    if (shooterMode != ShooterMode.VARIABLE_VELOCITY) shooterMode = ShooterMode.VARIABLE_VELOCITY;
+    if (shooterMode != ShooterMode.VARIABLE_VELOCITY)
+      shooterMode = ShooterMode.VARIABLE_VELOCITY;
     this.variableVelocity = velocity;
   }
 
@@ -214,5 +221,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     acceleratorMotor.set(shooterMode.shooterPowers.accelerator());
+    serializerMotor.set(shooterMode.shooterPowers.serializerSpeed());
   }
 }
