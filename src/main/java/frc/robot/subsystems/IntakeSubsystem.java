@@ -61,7 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
       tab.addDouble("intake voltage", () -> intakeMotor.getMotorVoltage().getValueAsDouble());
       tab.addString("Current Mode", () -> intakeMode.toString());
-      tab.addBoolean("Intake Sensor", this::isBeamBreakSensorTriggered);
+
     }
   }
 
@@ -69,10 +69,7 @@ public class IntakeSubsystem extends SubsystemBase {
     this.intakeMode = intakeMode;
   }
 
-  public boolean isBeamBreakSensorTriggered() {
-    // if is triggered return true
-    return !noteSensor.get();
-  }
+
 
   private IntakeMode getIntakeMode() {
     return intakeMode;

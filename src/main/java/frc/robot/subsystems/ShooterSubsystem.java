@@ -25,7 +25,9 @@ public class ShooterSubsystem extends SubsystemBase {
   private final TalonFX acceleratorMotor;
   private final TalonFX serializerMotor;
 
-  private DigitalInput noteSensor;
+  private DigitalInput shooterSensor;
+  private DigitalInput serializerSensor;
+
 
   private ShooterMode shooterMode;
 
@@ -58,7 +60,8 @@ public class ShooterSubsystem extends SubsystemBase {
     ACCEL_SECURE(Shooter.Modes.ACCEL_SECURE),
     VARIABLE_VELOCITY(Shooter.Modes.VARIABLE_VELOCITY),
     SHOOT_VAR(Shooter.Modes.SHOOT_VAR),
-    LOAD_SHOOTER(Shooter.Modes.LOAD_SHOOTER);
+    LOAD_SHOOTER(Shooter.Modes.LOAD_SHOOTER),
+    SHOOTER_UNLOAD(Shooter.Modes.SHOOTER_UNLOAD);
 
     public final ShooterPowers shooterPowers;
 
@@ -82,7 +85,9 @@ public class ShooterSubsystem extends SubsystemBase {
     acceleratorMotor = new TalonFX(Shooter.Ports.ACCELERATOR_MOTOR_PORT);
     serializerMotor = new TalonFX(Intake.Ports.SERIALIZER_MOTOR_PORT);
 
-    noteSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    shooterSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    serializerSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+
 
     // rollerMotorTop.getConfigurator().apply(new TalonFXConfiguration());
     // rollerMotorBottom.getConfigurator().apply(new TalonFXConfiguration());
@@ -108,7 +113,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMode = ShooterMode.IDLE;
 
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
-      shooterTab.addBoolean("Sensor Input", this::isBeamBreakSensorTriggered);
+      shooterTab.addBoolean("Sensor Input", this::isShooterBeamBreakSensorTriggered);
       shooterTab
           .addDouble(
               "Top Roller Velocity (RPS)", () -> rollerMotorTop.getVelocity().getValueAsDouble())
@@ -157,12 +162,17 @@ public class ShooterSubsystem extends SubsystemBase {
         && rollerMotorTop.getVelocity().getValueAsDouble() >= Shooter.SHOOTER_VELOCITY_THRESHOLD;
   }
 
-  public boolean isBeamBreakSensorTriggered() {
-    return !noteSensor.get();
+  public boolean isShooterBeamBreakSensorTriggered() {
+    return !shooterSensor.get();
+  }
+
+  public boolean isSerializerBeamBreakSensorTriggered() {
+    // if is triggered return true
+    return !serializerSensor.get();
   }
 
   public boolean isReadyToShoot() {
-    return isBeamBreakSensorTriggered() && isShooterUpToSpeed();
+    return isShooterBeamBreakSensorTriggered() && isShooterUpToSpeed();
   }
 
   public void haltAccelerator() {

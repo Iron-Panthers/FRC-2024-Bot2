@@ -54,6 +54,7 @@ import frc.robot.commands.ShooterRampUpCommand;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.commands.StopShooterCommand;
 import frc.robot.commands.TargetLockCommand;
+import frc.robot.commands.TransferNoteCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -424,19 +425,11 @@ public class RobotContainer {
                                 .alongWith(
                                         new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
 
-        // SPEAKER FROM STAGE
+        // NOTE TO SHOOTER OR SERIALIZER
         anthony
                 .b()
                 .onTrue(
-                        new RotateAngleDriveCommand(
-                                drivebaseSubsystem,
-                                translationXSupplier,
-                                translationYSupplier,
-                                DriverStation.getAlliance().get().equals(Alliance.Red)
-                                        ? -Setpoints.SPEAKER_DEGREES
-                                        : Setpoints.SPEAKER_DEGREES)
-                                .alongWith(new PivotAngleCommand(pivotSubsystem, 25.1)));
-
+                        new TransferNoteCommand(shooterSubsystem));
         // AMP
         jacob
                 .b()

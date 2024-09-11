@@ -58,8 +58,8 @@ public class RGBCommand extends Command {
   public void execute() {
     // two note = yellow
 
-    if (shooterSubsystem.isBeamBreakSensorTriggered()
-        && intakeSubsystem.isBeamBreakSensorTriggered()
+    if (shooterSubsystem.isShooterBeamBreakSensorTriggered()
+        && shooterSubsystem.isSerializerBeamBreakSensorTriggered()
         && twoNoteMsg.isEmpty()) {
       twoNoteMsg =
           Optional.of(
@@ -67,15 +67,15 @@ public class RGBCommand extends Command {
                   Constants.Lights.Colors.YELLOW,
                   RGBSubsystem.PatternTypes.PULSE,
                   RGBSubsystem.MessagePriority.C_TWO_NOTE_WARNING));
-    } else if (!(shooterSubsystem.isBeamBreakSensorTriggered()
-        && intakeSubsystem.isBeamBreakSensorTriggered())) {
+    } else if (!(shooterSubsystem.isShooterBeamBreakSensorTriggered()
+        && shooterSubsystem.isSerializerBeamBreakSensorTriggered())) {
       twoNoteMsg.ifPresent(RGBMessage::expire);
       twoNoteMsg = Optional.empty();
     }
 
     // serializer = blue
-    if ((intakeSubsystem.isBeamBreakSensorTriggered()
-            || shooterSubsystem.isBeamBreakSensorTriggered())
+    if ((shooterSubsystem.isShooterBeamBreakSensorTriggered()
+            || shooterSubsystem.isSerializerBeamBreakSensorTriggered())
         && noteInRobotMsg.isEmpty()) {
       /*|| shooterSubsystem.isBeamBreakSensorTriggered()*/
       noteInRobotMsg =
@@ -84,8 +84,8 @@ public class RGBCommand extends Command {
                   Constants.Lights.Colors.WHITE,
                   RGBSubsystem.PatternTypes.STROBE,
                   RGBSubsystem.MessagePriority.F_NOTE_IN_ROBOT));
-    } else if (!(intakeSubsystem.isBeamBreakSensorTriggered()
-        || shooterSubsystem.isBeamBreakSensorTriggered())) {
+    } else if (!(shooterSubsystem.isShooterBeamBreakSensorTriggered()
+        || shooterSubsystem.isSerializerBeamBreakSensorTriggered())) {
       noteInRobotMsg.ifPresent(RGBMessage::expire);
       noteInRobotMsg = Optional.empty();
     }

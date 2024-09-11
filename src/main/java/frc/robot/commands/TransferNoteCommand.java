@@ -10,16 +10,9 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 public class TransferNoteCommand extends Command {
 
   ShooterSubsystem shooterSubsystem;
-  DrivebaseSubsystem drivebaseSubsystem;
-  DoubleSupplier translationXSupplier;
-  DoubleSupplier translationYSupplier;
 
-  public TransferNoteCommand(DrivebaseSubsystem drivebaseSubsystem, DoubleSupplier translationXSupplier,
-      DoubleSupplier translationYSupplier) {
-    this.drivebaseSubsystem = drivebaseSubsystem;
-    this.translationXSupplier = translationXSupplier;
-    this.translationYSupplier = translationYSupplier;
-
+  public TransferNoteCommand(ShooterSubsystem shooterSubsystem) {
+    this.shooterSubsystem = shooterSubsystem;
   }
 
   @Override
@@ -29,7 +22,12 @@ public class TransferNoteCommand extends Command {
 
   @Override
   public void initialize() {
-    shooterSubsystem.setShooterMode(ShooterMode.LOAD_SHOOTER);
+    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered()){
+      shooterSubsystem.setShooterMode(ShooterMode.LOAD_SHOOTER);
+    }
+    else{
+      shooterSubsystem.setShooterMode(ShooterMode.SHOOTER_UNLOAD);
+    }
   }
 
   @Override
