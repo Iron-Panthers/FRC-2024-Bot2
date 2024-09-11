@@ -304,6 +304,8 @@ public final class Constants {
                         public static final ShooterSubsystem.ShooterPowers SHOOT_VAR = new ShooterSubsystem.ShooterPowers(
                                         30, 1,
                                         0.5, 0);
+                        public static final ShooterSubsystem.ShooterPowers LOAD_SHOOTER = new ShooterSubsystem.ShooterPowers(
+                                        0, 0, 0.5, 0.5);
                 }
 
                 public static final Slot0Configs ROLLER_PID_CONFIG = new Slot0Configs().withKP(0.2).withKS(0.23)

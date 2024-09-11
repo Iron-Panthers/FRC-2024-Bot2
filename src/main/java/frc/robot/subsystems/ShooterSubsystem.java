@@ -57,7 +57,8 @@ public class ShooterSubsystem extends SubsystemBase {
     SHOOT_SHUTTLE(Shooter.Modes.SHOOT_SHUTTLE),
     ACCEL_SECURE(Shooter.Modes.ACCEL_SECURE),
     VARIABLE_VELOCITY(Shooter.Modes.VARIABLE_VELOCITY),
-    SHOOT_VAR(Shooter.Modes.SHOOT_VAR);
+    SHOOT_VAR(Shooter.Modes.SHOOT_VAR),
+    LOAD_SHOOTER(Shooter.Modes.LOAD_SHOOTER);
 
     public final ShooterPowers shooterPowers;
 
