@@ -1,41 +1,19 @@
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DrivebaseSubsystem;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 
-public class TransferNoteCommand extends Command {
+public class TransferNoteCommand extends SequentialCommandGroup {
 
-  ShooterSubsystem shooterSubsystem;
-
-  public TransferNoteCommand(ShooterSubsystem shooterSubsystem) {
-    this.shooterSubsystem = shooterSubsystem;
-  }
-
-  @Override
-  public void execute() {
-
-  }
-
-  @Override
-  public void initialize() {
+  public TransferNoteCommand(
+    ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, PivotSubsystem pivotSubsystem) {
     if (shooterSubsystem.isSerializerBeamBreakSensorTriggered()){
-      shooterSubsystem.setShooterMode(ShooterMode.LOAD_SHOOTER);
+      addCommands(new LoadShooterCommand(shooterSubsystem));
     }
-    else{
-      shooterSubsystem.setShooterMode(ShooterMode.SHOOTER_UNLOAD);
+    else if (shooterSubsystem.isShooterBeamBreakSensorTriggered()){
+      addCommands(new UnloadShooterCommand(shooterSubsystem, pivotSubsystem).andThen(new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
     }
-  }
-
-  @Override
-  public void end(boolean interrupted) {
-  }
-
-  @Override
-  public boolean isFinished() {
-    return shooterSubsystem.isReadyToShoot();
   }
 }
