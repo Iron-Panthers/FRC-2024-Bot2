@@ -46,7 +46,7 @@ public class IntakeCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     intakeSubsystem.setIntakeMode(IntakeSubsystem.IntakeMode.HOLD);
-    shooterSubsystem.setShooterMode(ShooterMode.RAMP_SPEAKER);
+    shooterSubsystem.setShooterMode(ShooterMode.IDLE);
     shooterSubsystem.haltAccelerator();
   }
 

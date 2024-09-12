@@ -102,9 +102,7 @@ public class RGBCommand extends Command {
                   Constants.Lights.Colors.RED,
                   RGBSubsystem.PatternTypes.STROBE,
                   RGBSubsystem.MessagePriority.D_READY_TO_SHOOT));
-    } else if (shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SPEAKER) || //if it shot the note, it is not ready to shoot 
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_AMP_BACK)||           //instead of relying on beam break sensor input
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_AMP_FORWARD)||
+    } else if (shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SPEAKER) || //if it shot the note, it is not ready to shoot instead of relying on beam break sensor input
       shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SHUTTLE)||
       shooterSubsystem.getMode().equals(ShooterMode.SHOOT_VAR)||
       pivotSubsystem.isAtTargetDegrees()){

@@ -430,31 +430,9 @@ public class RobotContainer {
                 .b()
                 .onTrue(
                         new TransferNoteCommand(shooterSubsystem, intakeSubsystem, pivotSubsystem));
-        // AMP
-        jacob
-                .b()
-                .onTrue(
-                        new RotateAngleDriveCommand(
-                                drivebaseSubsystem,
-                                translationXSupplier,
-                                translationYSupplier,
-                                DriverStation.getAlliance().get().equals(Alliance.Red) ? -90 : 90)
-                                .alongWith(new PivotAngleCommand(pivotSubsystem, 50)) // FIXME idk
-                                .alongWith(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_AMP_BACK)));
 
-        /*
-         * jacob
-         * .a()
-         * .onTrue(
-         * new RotateAngleDriveCommand(
-         * drivebaseSubsystem,
-         * translationXSupplier,
-         * translationYSupplier,
-         * DriverStation.getAlliance().get().equals(Alliance.Red) ? 90 : -90)
-         * .alongWith(new PivotAngleCommand(pivotSubsystem, 138)) // FIXME idk
-         * .alongWith(new ShooterRampUpCommand(shooterSubsystem,
-         * ShooterMode.RAMP_AMP_FRONT)));
-         */
+
+
         // SPEAKER FROM SUBWOOFER
         anthony
                 .a()

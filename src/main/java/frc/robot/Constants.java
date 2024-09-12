@@ -95,7 +95,7 @@ public final class Constants {
         }
 
         public static final class Drive {
-                public static final int PIGEON_PORT = 0; // placeholder
+                public static final int PIGEON_PORT = 0; // FIXME
                 public static final String SWERVE_CANBUS = "rio"; // placeholder
 
                 // max voltage delivered to drivebase
@@ -247,8 +247,8 @@ public final class Constants {
                         public static final IntakePowers INTAKE = new IntakePowers(.95, .75);
                         public static final IntakePowers HOLD = new IntakePowers(0, 0d);
                         public static final IntakePowers REVERSE = new IntakePowers(-.5, -.5);
-                        public static final IntakePowers SHOOT_SPEAKER = new IntakePowers(0, 1);
-                        public static final IntakePowers SHOOT_AMP = new IntakePowers(0, 1);
+                        public static final IntakePowers SHOOT_SPEAKER = new IntakePowers(0, 0.7);
+                        public static final IntakePowers SHOOT_AMP = new IntakePowers(0, -1);
                 }
 
                 public static final boolean IS_BEAMBREAK = true;
@@ -270,24 +270,15 @@ public final class Constants {
                         public static final ShooterSubsystem.ShooterPowers RAMP_SPEAKER = new ShooterSubsystem.ShooterPowers(
                                         76, 1,
                                         0, 0);
-                        public static final ShooterSubsystem.ShooterPowers RAMP_AMP_BACK = new ShooterSubsystem.ShooterPowers(
-                                        25,
-                                        0.4, 0, 0);
-                        public static final ShooterSubsystem.ShooterPowers RAMP_AMP_FRONT = new ShooterSubsystem.ShooterPowers(
-                                        0, 0,
-                                        0, 0);
                         public static final ShooterSubsystem.ShooterPowers SHOOT_SPEAKER = new ShooterSubsystem.ShooterPowers(
                                         76, 1,
                                         .5, 0);
                         public static final ShooterSubsystem.ShooterPowers TARGET_LOCK = new ShooterSubsystem.ShooterPowers(
                                         0, 1, 0,
                                         0);
-                        public static final ShooterSubsystem.ShooterPowers SHOOT_AMP_BACK = new ShooterSubsystem.ShooterPowers(
-                                        25,
-                                        0.4, .5, 0);
-                        public static final ShooterSubsystem.ShooterPowers SHOOT_AMP_FORWARD = new ShooterSubsystem.ShooterPowers(
-                                        8,
-                                        2.5, .5, 0);
+                        public static final ShooterSubsystem.ShooterPowers SHOOT_AMP = new ShooterSubsystem.ShooterPowers(
+                                        0,
+                                        0, 0, 0);
                         public static final ShooterSubsystem.ShooterPowers MAINTAIN_VELOCITY = new ShooterSubsystem.ShooterPowers(
                                         40, 1, 0, 0);
                         public static final ShooterSubsystem.ShooterPowers SHUTTLE = new ShooterSubsystem.ShooterPowers(
@@ -363,7 +354,7 @@ public final class Constants {
                 public static final int EPSILON = 2;
 
                 public static final double PIVOT_CANCODER_OFFSET = -0.625977 + (0.070139 - 0.031250);
-                public static final double PIVOT_GEAR_RATIO = (60 / 8) * (60 / 16) * (72 / 15); // FIXME placeholder
+                public static final double PIVOT_GEAR_RATIO = (60 / 8) * (60 / 16) * (72 / 15); //  not used
                                                                                                 // values
                 public static final double CENTER_OF_ROBOT_TO_BUMPER = 0.41275;
 
@@ -594,7 +585,7 @@ public final class Constants {
                                 Units.degreesToRadians(720));
         }
 
-        public static class Elevator { // Placeholder elevator constant (update as needed)
+        public static class Elevator { // FIXME elevator constant (update as needed)
                 public static final double GEAR_RATIO = 0;
                 public static final double MAX_HEIGHT = 50;
         }

@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,7 +16,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final TalonFX intakeMotor;
   private final ShuffleboardTab tab = Shuffleboard.getTab("Intake");
-  private final DigitalInput noteSensor;
   private IntakeMode intakeMode;
   private IntakeMode pastMode;
   private double timeSincePenaltyHazard;
@@ -48,7 +46,6 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
 
     intakeMotor = new TalonFX(Intake.Ports.INTAKE_MOTOR_PORT);
-    noteSensor = new DigitalInput(Intake.Ports.INTAKE_SENSOR_PORT);
     intakeMotor.clearStickyFaults();
 
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
