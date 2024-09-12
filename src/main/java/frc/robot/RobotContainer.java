@@ -429,7 +429,7 @@ public class RobotContainer {
         anthony
                 .b()
                 .onTrue(
-                        new TransferNoteCommand(shooterSubsystem, intakeSubsystem, pivotSubsystem));
+                        new TransferNoteCommand(shooterSubsystem, intakeSubsystem, pivotSubsystem, elevatorSubsystem));
 
 
 

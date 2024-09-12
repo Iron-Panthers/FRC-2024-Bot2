@@ -58,7 +58,8 @@ public class ShooterSubsystem extends SubsystemBase {
     VARIABLE_VELOCITY(Shooter.Modes.VARIABLE_VELOCITY),
     SHOOT_VAR(Shooter.Modes.SHOOT_VAR),
     LOAD_SHOOTER(Shooter.Modes.LOAD_SHOOTER),
-    SHOOTER_UNLOAD(Shooter.Modes.SHOOTER_UNLOAD);
+    SHOOTER_UNLOAD(Shooter.Modes.SHOOTER_UNLOAD),
+    RAMP_AMP(Shooter.Modes.RAMP_AMP);
 
     public final ShooterPowers shooterPowers;
 
@@ -188,10 +189,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void advanceToShootMode() {
     switch (shooterMode) {
-      case IDLE:
-      if (isSerializerBeamBreakSensorTriggered()){
+      case RAMP_AMP:
         shooterMode = ShooterMode.SHOOT_AMP;
-      }
       case SHUTTLE:
         shooterMode = ShooterMode.SHOOT_SHUTTLE;
         break;

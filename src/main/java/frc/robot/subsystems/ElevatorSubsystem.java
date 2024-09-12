@@ -52,6 +52,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         currentAngle = 0;
     }
 
+    public double getArmPosition(){
+        return armInchesToRotations(armMotor.getPosition().getValueAsDouble());
+    }
+
+    public double getElevatorPosition(){
+        return inchesToRotations(elevatorMotor.getPosition().getValueAsDouble());
+    }
+
     public static double inchesToRotations(double height) {
         return height / Elevator.ELEVATOR_GEAR_RATIO;
     }
@@ -77,8 +85,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         this.targetAngle = MathUtil.clamp(targetAngle, Elevator.Arm.MAX_ANGLE, 0);
     }
 
-    public boolean nearTarget(double target, double current) {
-        if (target - 0.5 <= current && current <= target + 0.5) {
+    public boolean nearTargetAngle() {
+        if (targetAngle - 0.5 <= getArmPosition() && getArmPosition() <= targetAngle + 0.5) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean nearTargetHeight() {
+        if (targetHeight - 0.5 <= getElevatorPosition() && getElevatorPosition() <= targetHeight + 0.5) {
             return true;
         }
         return false;
@@ -91,8 +107,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        elevatorMotorPower = controller.calculate(inchesToRotations(elevatorMotor.getPosition().getValueAsDouble()), targetHeight);
-        armMotorPower = controller.calculate(armInchesToRotations(armMotor.getPosition().getValueAsDouble()), targetAngle);
+        elevatorMotorPower = controller.calculate(getElevatorPosition(), targetHeight);
+        armMotorPower = controller.calculate(getArmPosition(), targetAngle);
         elevatorMotor.setVoltage(MathUtil.clamp(elevatorMotorPower+Elevator.ELEVATOR_FEEDFORWARD, -10, 10));
         armMotor.setVoltage(MathUtil.clamp(armMotorPower+calculateFeedforward(), -10, 10));
     }
