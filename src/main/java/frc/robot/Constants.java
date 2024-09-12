@@ -354,7 +354,8 @@ public final class Constants {
                 public static final int EPSILON = 2;
 
                 public static final double PIVOT_CANCODER_OFFSET = -0.625977 + (0.070139 - 0.031250);
-                public static final double PIVOT_GEAR_RATIO = (60 / 8) * (60 / 16) * (72 / 15); //  not used
+                /** degrees per rotation */
+                public static final double PIVOT_GEAR_RATIO = 5+(1/3); //not used 
                                                                                                 // values
                 public static final double CENTER_OF_ROBOT_TO_BUMPER = 0.41275;
 
@@ -585,8 +586,23 @@ public final class Constants {
                                 Units.degreesToRadians(720));
         }
 
-        public static class Elevator { // FIXME elevator constant (update as needed)
-                public static final double GEAR_RATIO = 0;
-                public static final double MAX_HEIGHT = 50;
+        public static class Elevator { 
+                public static final class Ports {
+                        public static final int ARM_MOTOR_PORT = 18;
+                        public static final int ELEVATOR_MOTOR_PORT = 28;
+                }
+                /**inches per rotation */
+                public static final double ELEVATOR_GEAR_RATIO = 0.0906065;
+                /**FIXME */
+                public static final double MAX_HEIGHT = 50; 
+                /**FIXME */
+                public static final double ELEVATOR_FEEDFORWARD = 0.01;
+
+                public static final class Arm{
+                        /**FIXME */
+                        public static final double MAX_ANGLE = 50; 
+                        /**inches per rotation */
+                        public static final double ARM_GEAR_RATIO = 0.0231481481;
+                }
         }
 }
