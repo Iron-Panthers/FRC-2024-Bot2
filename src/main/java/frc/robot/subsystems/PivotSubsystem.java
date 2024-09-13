@@ -40,6 +40,7 @@ public class PivotSubsystem extends SubsystemBase {
   private Pose2d pose;
   private double distance;
   private GenericEntry debugTarget;
+  private double power;
 
   private double pastDebugTarget = 0;
   private boolean listenToDebug = true;
@@ -76,6 +77,7 @@ public class PivotSubsystem extends SubsystemBase {
       pivotTab.addNumber("Applied Voltage", () -> pivotMotor.getMotorVoltage().getValueAsDouble());
       pivotTab.addDouble("PID Voltage Output", () -> pidVoltageOutput);
       pivotTab.addDouble("Calculated Target Angle", () -> calculatedTargetDegrees);
+      pivotTab.addDouble("Power", () -> power);
       pivotTab.addDouble("Distance", () -> distance);
       pivotTab.add(pidController);
       debugTarget =
@@ -153,6 +155,10 @@ public class PivotSubsystem extends SubsystemBase {
     return targetDegrees - getCurrentAngle();
   }
 
+  public void setPower(double power){
+    this.power = power;
+  }
+
   @Override
   public void periodic() {
 
@@ -168,8 +174,8 @@ public class PivotSubsystem extends SubsystemBase {
             getCurrentAngle(),
             MathUtil.clamp(targetDegrees, Setpoints.MINIMUM_ANGLE, Setpoints.MAXIMUM_ANGLE));
 
-    pidVoltageOutput = MathUtil.clamp(pidOutput + getFeedForward(), -5, 5);
+    pidVoltageOutput = MathUtil.clamp(pidOutput + getFeedForward(), -10, 10);
 
-    pivotMotor.setVoltage(pidVoltageOutput);
+    pivotMotor.set(power);
   }
 }

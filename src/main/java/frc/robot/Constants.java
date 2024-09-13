@@ -256,8 +256,8 @@ public final class Constants {
 
         public static final class Shooter {
                 public static final class Ports {
-                        public static final int TOP_SHOOTER_MOTOR_PORT = 20;
-                        public static final int BOTTOM_SHOOTER_MOTOR_PORT = 19;
+                        public static final int TOP_SHOOTER_MOTOR_PORT = 0;
+                        public static final int BOTTOM_SHOOTER_MOTOR_PORT = 5;
                         public static final int ACCELERATOR_MOTOR_PORT = 17;
                         public static final int BEAM_BREAK_SENSOR_PORT = 8;
                 }

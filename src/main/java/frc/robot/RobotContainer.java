@@ -134,89 +134,91 @@ public class RobotContainer {
      */
     public RobotContainer() {
 
-        // reigster commands for pathplanner
-        NamedCommands.registerCommand(
-                "IntakeCommand", new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
-        NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem));
-        NamedCommands.registerCommand(
-                "ShooterRampUpCommand",
-                new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
-        NamedCommands.registerCommand("SetShooterToRamping", new SetRampModeCommand(shooterSubsystem));
-        NamedCommands.registerCommand("AngleAtSpeaker", new PivotAngleCommand(pivotSubsystem, 55));
-        NamedCommands.registerCommand("AngleAt1", new PivotAngleCommand(pivotSubsystem, 38));
-        NamedCommands.registerCommand("AngleAt2", new PivotAngleCommand(pivotSubsystem, 40));
-        NamedCommands.registerCommand("AngleAt3", new PivotAngleCommand(pivotSubsystem, 32));
-        NamedCommands.registerCommand("AngleAtFar", new PivotAngleCommand(pivotSubsystem, 30));
-        NamedCommands.registerCommand("AngleAtCenter1", new PivotAngleCommand(pivotSubsystem, 22.5));
-        NamedCommands.registerCommand(
-                "Heading4Note1", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -90));
-        NamedCommands.registerCommand(
-                "Heading4Note2", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -17));
-        NamedCommands.registerCommand(
-                "MaintainShooterVelocity", new MaintainShooterCommand(shooterSubsystem));
-        NamedCommands.registerCommand("HeadingLock", new HeadingTargetLock(drivebaseSubsystem));
-        NamedCommands.registerCommand("LockForward", new HeadingAngle(drivebaseSubsystem, 0));
-        NamedCommands.registerCommand(
-                "AutoPivotAngle", new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem));
-        NamedCommands.registerCommand(
-                "AutoDrivebaseAngle", new TargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0));
-        NamedCommands.registerCommand("AccelNote", new AccelNoteCommand(shooterSubsystem));
-        NamedCommands.registerCommand(
-                "ZeroOrigin", new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope()));
-        NamedCommands.registerCommand(
-                "ZeroSubwoofer1",
-                new InstantCommand(
-                        () -> drivebaseSubsystem.zeroGyroscopeOffset(
-                                DriverStation.getAlliance().get().equals(Alliance.Blue) ? -60 : 60)));
-        NamedCommands.registerCommand(
-                "ZeroSubwoofer3",
-                new InstantCommand(
-                        () -> drivebaseSubsystem.zeroGyroscopeOffset(
-                                DriverStation.getAlliance().get().equals(Alliance.Blue) ? 60 : -60)));
-        NamedCommands.registerCommand(
-                "recenterPose1",
-                DriverStation.getAlliance().get().equals(Alliance.Blue)
-                        ? new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(1.12, 6.68), Rotation2d.fromDegrees(56.93))),
-                                drivebaseSubsystem)
-                        : new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(-56.93))),
-                                drivebaseSubsystem));
-        NamedCommands.registerCommand(
-                "recenterPose2",
-                DriverStation.getAlliance().get().equals(Alliance.Blue)
-                        ? new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(1.4, 5.56), Rotation2d.fromDegrees(0))),
-                                drivebaseSubsystem)
-                        : new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(15.2, 5.56), Rotation2d.fromDegrees(180))),
-                                drivebaseSubsystem));
-        NamedCommands.registerCommand(
-                "recenterPose3",
-                DriverStation.getAlliance().get().equals(Alliance.Blue)
-                        ? new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(1.12, 4.36), Rotation2d.fromDegrees(-98.90))),
-                                drivebaseSubsystem)
-                        : new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(98.90))),
-                                drivebaseSubsystem));
-        NamedCommands.registerCommand(
-                "recenterPose4",
-                DriverStation.getAlliance().get().equals(Alliance.Blue)
-                        ? new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(1, 2.5), Rotation2d.fromDegrees(0))),
-                                drivebaseSubsystem)
-                        : new InstantCommand(
-                                () -> drivebaseSubsystem.resetOdometryToPose(
-                                        new Pose2d(new Translation2d(15.5, 2.5), Rotation2d.fromDegrees(180))),
-                                drivebaseSubsystem));
+        // // reigster commands for pathplanner
+        // NamedCommands.registerCommand(
+        //         "IntakeCommand", new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
+        // NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem));
+        // NamedCommands.registerCommand(
+        //         "ShooterRampUpCommand",
+        //         new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
+        // NamedCommands.registerCommand("SetShooterToRamping", new SetRampModeCommand(shooterSubsystem));
+        // NamedCommands.registerCommand("AngleAtSpeaker", new PivotAngleCommand(pivotSubsystem, 55));
+        // NamedCommands.registerCommand("AngleAt1", new PivotAngleCommand(pivotSubsystem, 38));
+        // NamedCommands.registerCommand("AngleAt2", new PivotAngleCommand(pivotSubsystem, 40));
+        // NamedCommands.registerCommand("AngleAt3", new PivotAngleCommand(pivotSubsystem, 32));
+        // NamedCommands.registerCommand("AngleAtFar", new PivotAngleCommand(pivotSubsystem, 30));
+        // NamedCommands.registerCommand("AngleAtCenter1", new PivotAngleCommand(pivotSubsystem, 22.5));
+        // NamedCommands.registerCommand(
+        //         "Heading4Note1", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -90));
+        // NamedCommands.registerCommand(
+        //         "Heading4Note2", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -17));
+        // NamedCommands.registerCommand(
+        //         "AngleDriveBase", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -17));
+        // NamedCommands.registerCommand(
+        //         "MaintainShooterVelocity", new MaintainShooterCommand(shooterSubsystem));
+        // NamedCommands.registerCommand("HeadingLock", new HeadingTargetLock(drivebaseSubsystem));
+        // NamedCommands.registerCommand("LockForward", new HeadingAngle(drivebaseSubsystem, 0));
+        // NamedCommands.registerCommand(
+        //         "AutoPivotAngle", new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem));
+        // NamedCommands.registerCommand(
+        //         "AutoDrivebaseAngle", new TargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0));
+        // NamedCommands.registerCommand("AccelNote", new AccelNoteCommand(shooterSubsystem));
+        // NamedCommands.registerCommand(
+        //         "ZeroOrigin", new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope()));
+        // NamedCommands.registerCommand(
+        //         "ZeroSubwoofer1",
+        //         new InstantCommand(
+        //                 () -> drivebaseSubsystem.zeroGyroscopeOffset(
+        //                         DriverStation.getAlliance().get().equals(Alliance.Blue) ? -60 : 60)));
+        // NamedCommands.registerCommand(
+        //         "ZeroSubwoofer3",
+        //         new InstantCommand(
+        //                 () -> drivebaseSubsystem.zeroGyroscopeOffset(
+        //                         DriverStation.getAlliance().get().equals(Alliance.Blue) ? 60 : -60)));
+        // NamedCommands.registerCommand(
+        //         "recenterPose1",
+        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
+        //                 ? new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(1.12, 6.68), Rotation2d.fromDegrees(56.93))),
+        //                         drivebaseSubsystem)
+        //                 : new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(-56.93))),
+        //                         drivebaseSubsystem));
+        // NamedCommands.registerCommand(
+        //         "recenterPose2",
+        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
+        //                 ? new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(1.4, 5.56), Rotation2d.fromDegrees(0))),
+        //                         drivebaseSubsystem)
+        //                 : new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(15.2, 5.56), Rotation2d.fromDegrees(180))),
+        //                         drivebaseSubsystem));
+        // NamedCommands.registerCommand(
+        //         "recenterPose3",
+        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
+        //                 ? new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(1.12, 4.36), Rotation2d.fromDegrees(-98.90))),
+        //                         drivebaseSubsystem)
+        //                 : new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(98.90))),
+        //                         drivebaseSubsystem));
+        // NamedCommands.registerCommand(
+        //         "recenterPose4",
+        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
+        //                 ? new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(1, 2.5), Rotation2d.fromDegrees(0))),
+        //                         drivebaseSubsystem)
+        //                 : new InstantCommand(
+        //                         () -> drivebaseSubsystem.resetOdometryToPose(
+        //                                 new Pose2d(new Translation2d(15.5, 2.5), Rotation2d.fromDegrees(180))),
+        //                         drivebaseSubsystem));
 
         // Set up the default command for the drivetrain.
         // The controls are for field-oriented driving:
@@ -408,7 +410,7 @@ public class RobotContainer {
 
         DoubleSupplier pivotManualRate = () -> modifyAxis(-jacob.getLeftY());
 
-        new Trigger(() -> Math.abs(pivotManualRate.getAsDouble()) > 0.07)
+        new Trigger(() -> pivotManualRate.getAsDouble() > 0.07)
                 .onTrue(new PivotManualCommand(pivotSubsystem, pivotManualRate));
 
         // SOURCE

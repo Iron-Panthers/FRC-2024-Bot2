@@ -83,8 +83,8 @@ public class ShooterSubsystem extends SubsystemBase {
     acceleratorMotor = new TalonFX(Shooter.Ports.ACCELERATOR_MOTOR_PORT);
     serializerMotor = new TalonFX(Intake.Ports.SERIALIZER_MOTOR_PORT);
 
-    shooterSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
-    serializerSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    // shooterSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    // serializerSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
 
 
     // rollerMotorTop.getConfigurator().apply(new TalonFXConfiguration());
@@ -161,12 +161,12 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isShooterBeamBreakSensorTriggered() {
-    return !shooterSensor.get();
+    return true;
   }
 
   public boolean isSerializerBeamBreakSensorTriggered() {
     // if is triggered return true
-    return !serializerSensor.get();
+    return true;
   }
 
   public boolean isReadyToShoot() {
@@ -225,7 +225,7 @@ public class ShooterSubsystem extends SubsystemBase {
               shooterMode.shooterPowers.roller() * shooterMode.shooterPowers.topToBottomRatio()));
     }
 
-    acceleratorMotor.set(shooterMode.shooterPowers.accelerator());
-    serializerMotor.set(shooterMode.shooterPowers.serializerSpeed());
+    acceleratorMotor.set(0);
+    serializerMotor.set(1);
   }
 }
