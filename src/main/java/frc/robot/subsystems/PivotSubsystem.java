@@ -96,7 +96,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public double getCurrentAngle() {
-    return rotationsToDegrees(pivotCANcoder.getAbsolutePosition().getValueAsDouble());
+    return rotationsToDegrees(pivotMotor.getPosition().getValueAsDouble());
   }
 
   public double getTargetDegrees() {
@@ -117,7 +117,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   private static double rotationsToDegrees(double rotations) {
-    return (rotations * 360);
+    return rotations*Pivot.PIVOT_GEAR_RATIO;
   }
 
   public void calculatePivotTargetDegrees(Pose2d pose, double xV, double yV) {
@@ -168,7 +168,7 @@ public class PivotSubsystem extends SubsystemBase {
             getCurrentAngle(),
             MathUtil.clamp(targetDegrees, Setpoints.MINIMUM_ANGLE, Setpoints.MAXIMUM_ANGLE));
 
-    pidVoltageOutput = MathUtil.clamp(pidOutput + getFeedForward(), -10, 10);
+    pidVoltageOutput = MathUtil.clamp(pidOutput + getFeedForward(), -5, 5);
 
     pivotMotor.setVoltage(pidVoltageOutput);
   }

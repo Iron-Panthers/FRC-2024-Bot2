@@ -358,7 +358,7 @@ public final class Constants {
 
                 public static final double PIVOT_CANCODER_OFFSET = -0.625977 + (0.070139 - 0.031250);
                 /** degrees per rotation */
-                public static final double PIVOT_GEAR_RATIO = 5+(1/3); //not used 
+                public static final double PIVOT_GEAR_RATIO = 5.33333; //not used 
                                                                                                 // values
                 public static final double CENTER_OF_ROBOT_TO_BUMPER = 0.41275;
 

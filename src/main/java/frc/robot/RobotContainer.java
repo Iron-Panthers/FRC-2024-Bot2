@@ -137,7 +137,7 @@ public class RobotContainer {
         // reigster commands for pathplanner
         NamedCommands.registerCommand(
                 "IntakeCommand", new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
-        NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem, intakeSubsystem));
+        NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem));
         NamedCommands.registerCommand(
                 "ShooterRampUpCommand",
                 new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
@@ -362,7 +362,7 @@ public class RobotContainer {
                 .rightBumper()
                 .onTrue(
                         new AccelNoteCommand(shooterSubsystem)
-                                .andThen(new ShootCommand(shooterSubsystem, intakeSubsystem))
+                                .andThen(new ShootCommand(shooterSubsystem))
                                 .andThen(
                                         new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
 
@@ -370,7 +370,7 @@ public class RobotContainer {
         jacob
                 .rightTrigger()
                 .onTrue(new AccelNoteCommand(shooterSubsystem)
-                        .andThen(new ShootCommand(shooterSubsystem, intakeSubsystem)));
+                        .andThen(new ShootCommand(shooterSubsystem)));
 
         anthony.rightStick().onTrue(new DefenseModeCommand(drivebaseSubsystem));
         anthony.leftStick().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
