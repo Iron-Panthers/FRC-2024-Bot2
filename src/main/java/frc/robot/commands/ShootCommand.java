@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 
@@ -13,7 +12,7 @@ public class ShootCommand extends Command {
   private ShooterSubsystem shooterSubsystem;
 
   /** Creates a new ShootCommand. */
-  public ShootCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
+  public ShootCommand(ShooterSubsystem shooterSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooterSubsystem = shooterSubsystem;
     addRequirements(shooterSubsystem);

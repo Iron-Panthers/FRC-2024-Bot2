@@ -380,16 +380,16 @@ public class RobotContainer {
                         new TargetLockCommand(drivebaseSubsystem, translationXSupplier, translationYSupplier)
                                 .alongWith(new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem)));
 
-        jacob
-                .a()
-                .onTrue(
-                        new RotateAngleDriveCommand(
-                                drivebaseSubsystem,
-                                translationXSupplier,
-                                translationYSupplier,
-                                DriverStation.getAlliance().get().equals(Alliance.Red) ? -40 : 40)
-                                .alongWith(new PivotAngleCommand(pivotSubsystem, 60))
-                                .alongWith(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.SHUTTLE)));
+        // jacob
+        //         .a()
+        //         .onTrue(
+        //                 new RotateAngleDriveCommand(
+        //                         drivebaseSubsystem,
+        //                         translationXSupplier,
+        //                         translationYSupplier,
+        //                         DriverStation.getAlliance().get().equals(Alliance.Red) ? -40 : 40)
+        //                         .alongWith(new PivotAngleCommand(pivotSubsystem, 60))
+        //                         .alongWith(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.SHUTTLE)));
 
         jacob
                 .povDown()
@@ -431,7 +431,14 @@ public class RobotContainer {
                 .onTrue(
                         new TransferNoteCommand(shooterSubsystem, intakeSubsystem, pivotSubsystem, elevatorSubsystem));
 
-
+        jacob
+                .b()
+                .onTrue(
+                        new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
+        jacob
+                .a()
+                .onTrue(
+                        new ShootCommand(shooterSubsystem));
 
         // SPEAKER FROM SUBWOOFER
         anthony
