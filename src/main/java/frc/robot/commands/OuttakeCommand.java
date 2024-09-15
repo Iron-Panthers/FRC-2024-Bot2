@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.Modes;
+import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 
 public class OuttakeCommand extends Command {
 
@@ -23,7 +23,7 @@ public class OuttakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.setIntakeMode(Modes.REVERSE);
+    intakeSubsystem.setIntakeMode(IntakeMode.REVERSE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

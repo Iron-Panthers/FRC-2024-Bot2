@@ -19,7 +19,7 @@ public class PivotManualCommand extends Command {
 
   @Override
   public void execute() {
-    pivotSubsystem.setTargetDegrees(pivotSubsystem.getTargetDegrees() + joystickRate.getAsDouble());
+    pivotSubsystem.setPower(joystickRate.getAsDouble());
   }
 
   @Override

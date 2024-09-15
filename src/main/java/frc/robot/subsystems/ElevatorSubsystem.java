@@ -1,8 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.MathUtil;
+// import com.ctre.phoenix6.signals.NeutralModeValue;
+// import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -13,55 +15,102 @@ import frc.robot.Constants.Elevator;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  private TalonFX motor;
-  private PIDController controller;
-  private double targetHeight;
-  private double motorPower;
-  private double currentHeight = 0;
-  private final ShuffleboardTab ElevatorTab = Shuffleboard.getTab("Elevator");
+    private TalonFX armMotor;
+    private TalonFX elevatorMotor;
+    private PIDController controller;
+    private double targetHeight;
+    private double targetAngle;
+    private double elevatorMotorPower;
+    private double armMotorPower;
+    private double currentHeight;
+    private double currentAngle;
+    private final ShuffleboardTab ElevatorTab = Shuffleboard.getTab("Elevator");
 
-  /** Creates a new ElevatorSubsystem. */
-  public ElevatorSubsystem() {
+    /** Creates a new ElevatorSubsystem. */
+    public ElevatorSubsystem() {
 
-    motor = new TalonFX(15);
+        elevatorMotor = new TalonFX(Elevator.Ports.ELEVATOR_MOTOR_PORT);
+        armMotor = new TalonFX(Elevator.Ports.ARM_MOTOR_PORT);
 
-    motor.clearStickyFaults();
+        elevatorMotor.clearStickyFaults();
+        armMotor.clearStickyFaults();
+        elevatorMotor.setPosition(0);
+        armMotor.setPosition(0);
 
-    controller = new PIDController(0.4, 0, 0.0125);
 
-    ElevatorTab.addNumber("Current Motor Power", () -> this.motorPower);
-    ElevatorTab.addNumber("Target Height", () -> this.targetHeight);
-    // ElevatorTab.addNumber("PID output", () -> this.controller);
-    ElevatorTab.addNumber("Current Height", () -> this.currentHeight);
-    ElevatorTab.add(controller);
+        controller = new PIDController(0.4, 0, 0.0125);
 
-    targetHeight = 0;
-    currentHeight = 0;
-  }
+        ElevatorTab.addNumber("Target Height", () -> this.targetHeight);
+        ElevatorTab.addNumber("Target Angle", () -> this.targetAngle);
+        // ElevatorTab.addNumber("PID output", () -> this.controller);
+        ElevatorTab.addNumber("Current Height", () -> this.currentHeight);
+        ElevatorTab.add(controller);
 
-  public static double inchesToRotations(double height) {
-    return height / Elevator.GEAR_RATIO;
-  }
-
-  public static double rotationsToInches(double rotations) {
-    return rotations * Elevator.GEAR_RATIO;
-  }
-
-  public void setTargetHeight(double targetHeight) {
-    this.targetHeight = targetHeight;
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    motorPower = controller.calculate(rotationsToInches(0), targetHeight); //Placeholder for rotations
-
-  }
-
-  public boolean nearTargetHeight() {
-    if (targetHeight - 0.5 <= currentHeight && currentHeight <= targetHeight + 0.5) {
-      return true;
+        targetHeight = 0;
+        currentHeight = 0;
+        targetAngle = 0;
+        currentAngle = 0;
     }
-    return false;
-  }
+
+    public double getArmPosition(){
+        return armInchesToRotations(armMotor.getPosition().getValueAsDouble());
+    }
+
+    public double getElevatorPosition(){
+        return inchesToRotations(elevatorMotor.getPosition().getValueAsDouble());
+    }
+
+    public static double inchesToRotations(double height) {
+        return height / Elevator.ELEVATOR_GEAR_RATIO;
+    }
+
+    public static double rotationsToInches(double rotations) {
+        return rotations * Elevator.ELEVATOR_GEAR_RATIO;
+    }
+
+    public static double armInchesToRotations(double degrees) {
+        return degrees / Elevator.Arm.ARM_GEAR_RATIO;
+    }
+
+    public static double rotationsToArmInches(double rotations) {
+        return rotations * Elevator.Arm.ARM_GEAR_RATIO;
+    }
+
+    public void setTargetHeight(double targetHeight) {
+        this.targetHeight = MathUtil.clamp(targetHeight, Elevator.MAX_HEIGHT, 0);
+
+    }
+
+    public void setTargetAngle(double targetAngle) {
+        this.targetAngle = MathUtil.clamp(targetAngle, Elevator.Arm.MAX_ANGLE, 0);
+    }
+
+    public boolean nearTargetAngle() {
+        if (targetAngle - 0.5 <= getArmPosition() && getArmPosition() <= targetAngle + 0.5) {
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean nearTargetHeight() {
+        if (targetHeight - 0.5 <= getElevatorPosition() && getElevatorPosition() <= targetHeight + 0.5) {
+            return true;
+        }
+        return false;
+    }
+
+    public double calculateFeedforward(){
+        return 0; //FIXME
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+        elevatorMotorPower = controller.calculate(getElevatorPosition(), targetHeight);
+        armMotorPower = controller.calculate(getArmPosition(), targetAngle);
+        elevatorMotor.setVoltage(MathUtil.clamp(elevatorMotorPower+Elevator.ELEVATOR_FEEDFORWARD, -10, 10));
+        armMotor.setVoltage(MathUtil.clamp(armMotorPower+calculateFeedforward(), -10, 10));
+    }
+
 }

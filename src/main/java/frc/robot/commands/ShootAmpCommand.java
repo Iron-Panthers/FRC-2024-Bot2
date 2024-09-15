@@ -21,11 +21,7 @@ public class ShootAmpCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (shooterSubsystem.getMode().equals(ShooterMode.RAMP_AMP_BACK)) {
-      shooterSubsystem.setShooterMode(ShooterMode.SHOOT_AMP_BACK);
-    } else {
-      shooterSubsystem.setShooterMode(ShooterMode.SHOOT_AMP_FORWARD);
-    }
+    shooterSubsystem.setShooterMode(ShooterMode.SHOOT_AMP);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,6 +35,6 @@ public class ShootAmpCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !shooterSubsystem.isBeamBreakSensorTriggered();
+    return !shooterSubsystem.isShooterBeamBreakSensorTriggered();
   }
 }
