@@ -58,6 +58,7 @@ public class PivotSubsystem extends SubsystemBase {
     pivotMotor.setInverted(true);
     pivotMotor.clearStickyFaults();
     pivotMotor.set(0);
+    pivotMotor.setPosition(0);
 
     pivotMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -159,6 +160,7 @@ public class PivotSubsystem extends SubsystemBase {
     this.power = power;
   }
 
+
   @Override
   public void periodic() {
 
@@ -176,6 +178,6 @@ public class PivotSubsystem extends SubsystemBase {
 
     pidVoltageOutput = MathUtil.clamp(pidOutput + getFeedForward(), -10, 10);
 
-    pivotMotor.set(power);
+    pivotMotor.set(getFeedForward()+power);
   }
 }
