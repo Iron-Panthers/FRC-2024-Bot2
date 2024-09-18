@@ -17,28 +17,22 @@ public class IntakeSubsystem extends SubsystemBase {
   private final TalonFX intakeMotor;
   private final ShuffleboardTab tab = Shuffleboard.getTab("Intake");
   private IntakeMode intakeMode;
-  private IntakeMode pastMode;
-  private double timeSincePenaltyHazard;
-  private boolean pastPenalty;
 
   public enum IntakeMode {
     INTAKE(Intake.Modes.INTAKE),
     HOLD(Intake.Modes.HOLD),
-    REVERSE(Intake.Modes.REVERSE),
-    SHOOT_SPEAKER(Intake.Modes.SHOOT_SPEAKER),
-    SHOOT_AMP(Intake.Modes.SHOOT_AMP);
+    REVERSE(Intake.Modes.REVERSE);
 
-    public final IntakePowers modePowers;
+    public final IntakePowers modePowers; // rename to modePower
 
     private IntakeMode(IntakePowers modePowers) {
       this.modePowers = modePowers;
     }
   }
 
-  public record IntakePowers(double intakeSpeed, double serializerSpeed) {
-    public IntakePowers(double intakeSpeed, double serializerSpeed) {
+  public record IntakePowers(double intakeSpeed) {
+    public IntakePowers(double intakeSpeed) {
       this.intakeSpeed = intakeSpeed;
-      this.serializerSpeed = serializerSpeed;
     }
   }
 
@@ -52,8 +46,6 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.setInverted(true);
 
     intakeMode = IntakeMode.HOLD;
-
-    timeSincePenaltyHazard = 7;
 
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
       tab.addDouble("intake voltage", () -> intakeMotor.getMotorVoltage().getValueAsDouble());

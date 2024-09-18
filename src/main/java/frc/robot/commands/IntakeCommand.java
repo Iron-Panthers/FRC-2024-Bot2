@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeMode;
 import frc.robot.subsystems.PivotSubsystem;
@@ -16,16 +17,19 @@ public class IntakeCommand extends Command {
   IntakeSubsystem intakeSubsystem;
   ShooterSubsystem shooterSubsystem;
   PivotSubsystem pivotSubsystem;
+  ElevatorSubsystem elevatorSubsystem;
 
   /** Creates a new IntakeCommand. */
   public IntakeCommand(
       IntakeSubsystem intakeSubsystem,
       ShooterSubsystem shooterSubsystem,
-      PivotSubsystem pivotSubsystem) {
+      PivotSubsystem pivotSubsystem,
+      ElevatorSubsystem elevatorSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     this.shooterSubsystem = shooterSubsystem;
     this.pivotSubsystem = pivotSubsystem;
-    addRequirements(intakeSubsystem, shooterSubsystem, pivotSubsystem);
+    this.elevatorSubsystem = elevatorSubsystem;
+    addRequirements(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(intakeSubsystem, shooterSubsystem, pivotSubsystem);
   }
@@ -36,6 +40,7 @@ public class IntakeCommand extends Command {
     pivotSubsystem.setTargetDegrees(20);
     intakeSubsystem.setIntakeMode(IntakeMode.INTAKE);
     shooterSubsystem.setShooterMode(ShooterMode.INTAKE);
+    elevatorSubsystem.setTargetHeight(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -47,7 +52,6 @@ public class IntakeCommand extends Command {
   public void end(boolean interrupted) {
     intakeSubsystem.setIntakeMode(IntakeSubsystem.IntakeMode.HOLD);
     shooterSubsystem.setShooterMode(ShooterMode.IDLE);
-    shooterSubsystem.haltAccelerator();
   }
 
   // Returns true when the command should end.

@@ -33,12 +33,11 @@ import frc.robot.Constants.Drive.Setpoints;
 import frc.robot.autonomous.HeadingAngle;
 import frc.robot.autonomous.HeadingTargetLock;
 import frc.robot.commands.AccelNoteCommand;
-import frc.robot.commands.AdvancedIntakeCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.HeightCommand;
-import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.MaintainShooterCommand;
 import frc.robot.commands.OuttakeCommand;
 import frc.robot.commands.PivotAngleCommand;
@@ -131,7 +130,7 @@ public class RobotContainer {
 
     // reigster commands for pathplanner
     NamedCommands.registerCommand(
-        "IntakeCommand", new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
+        "IntakeCommand", new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem));
     NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem));
     NamedCommands.registerCommand(
         "ShooterRampUpCommand",
@@ -347,11 +346,11 @@ public class RobotContainer {
     // INTAKE
     anthony
         .leftBumper()
-        .onTrue(new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
+        .onTrue(new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem));
 
     jacob
         .leftBumper()
-        .onTrue(new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
+        .onTrue(new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem));
 
     // SHOOT
     anthony
@@ -360,7 +359,7 @@ public class RobotContainer {
             new AccelNoteCommand(shooterSubsystem)
                 .andThen(new ShootCommand(shooterSubsystem))
                 .andThen(
-                    new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
+                    new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // SHOOT OVERRIDE
     jacob
@@ -419,7 +418,7 @@ public class RobotContainer {
                         ? -Setpoints.SOURCE_DEGREES
                         : Setpoints.SOURCE_DEGREES)
                 .alongWith(
-                    new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
+                    new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // NOTE TO SHOOTER OR SERIALIZER
     anthony

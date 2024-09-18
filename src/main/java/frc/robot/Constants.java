@@ -242,11 +242,9 @@ public final class Constants {
     }
 
     public static final class Modes {
-      public static final IntakePowers INTAKE = new IntakePowers(.95, .75);
-      public static final IntakePowers HOLD = new IntakePowers(0, 0d);
-      public static final IntakePowers REVERSE = new IntakePowers(-.5, -.5);
-      public static final IntakePowers SHOOT_SPEAKER = new IntakePowers(0, 0.7);
-      public static final IntakePowers SHOOT_AMP = new IntakePowers(0, -1);
+      public static final IntakePowers INTAKE = new IntakePowers(.95);
+      public static final IntakePowers HOLD = new IntakePowers(0);
+      public static final IntakePowers REVERSE = new IntakePowers(-.5);
     }
 
     public static final boolean IS_BEAMBREAK = true;

@@ -18,7 +18,7 @@ public class TransferNoteCommand extends SequentialCommandGroup {
     } else if (shooterSubsystem.isShooterBeamBreakSensorTriggered()) {
       addCommands(
           new UnloadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)
-              .andThen(new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
+              .andThen(new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
     }
   }
 }
