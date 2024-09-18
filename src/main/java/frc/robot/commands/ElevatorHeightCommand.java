@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class HeightCommand extends Command {
+public class ElevatorHeightCommand extends Command {
 
   ElevatorSubsystem elevatorSubsystem;
 
@@ -21,7 +21,7 @@ public class HeightCommand extends Command {
    */
   double height;
 
-  public HeightCommand(ElevatorSubsystem elevatorSubsystem, double height) {
+  public ElevatorHeightCommand(ElevatorSubsystem elevatorSubsystem, double height) {
     this.elevatorSubsystem = elevatorSubsystem;
     this.height = height;
     // Use addRequirements() here to declare subsystem dependencies.

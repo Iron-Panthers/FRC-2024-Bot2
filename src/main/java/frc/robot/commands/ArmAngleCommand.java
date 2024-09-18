@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class AngleCommand extends Command {
+public class ArmAngleCommand extends Command {
 
   ElevatorSubsystem elevatorSubsystem;
 
@@ -21,7 +21,7 @@ public class AngleCommand extends Command {
    */
   double angle;
 
-  public AngleCommand(ElevatorSubsystem elevatorSubsystem, double angle) {
+  public ArmAngleCommand(ElevatorSubsystem elevatorSubsystem, double angle) {
     this.elevatorSubsystem = elevatorSubsystem;
     this.angle = angle;
     // Use addRequirements() here to declare subsystem dependencies.

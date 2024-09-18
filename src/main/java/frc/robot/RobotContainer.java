@@ -35,9 +35,10 @@ import frc.robot.autonomous.HeadingTargetLock;
 import frc.robot.commands.AccelNoteCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.ElevatorHeightCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
-import frc.robot.commands.HeightCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.LoadShooterCommand;
 import frc.robot.commands.OuttakeCommand;
 import frc.robot.commands.PivotAngleCommand;
 import frc.robot.commands.PivotManualCommand;
@@ -46,13 +47,10 @@ import frc.robot.commands.RGBCommand;
 import frc.robot.commands.RotateAngleDriveCommand;
 import frc.robot.commands.RotateVectorDriveCommand;
 import frc.robot.commands.RotateVelocityDriveCommand;
-import frc.robot.commands.SetRampModeCommand;
 import frc.robot.commands.ShootCommand;
-import frc.robot.commands.ShooterRampUpCommand;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.commands.StopShooterCommand;
 import frc.robot.commands.TargetLockCommand;
-import frc.robot.commands.TransferNoteCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -62,7 +60,6 @@ import frc.robot.subsystems.NetworkWatchdogSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.util.ControllerUtil;
 import frc.util.Layer;
@@ -132,10 +129,6 @@ public class RobotContainer {
         "IntakeCommand",
         new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem));
     NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem));
-    NamedCommands.registerCommand(
-        "ShooterRampUpCommand",
-        new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
-    NamedCommands.registerCommand("SetShooterToRamping", new SetRampModeCommand(shooterSubsystem));
     NamedCommands.registerCommand("AngleAtSpeaker", new PivotAngleCommand(pivotSubsystem, 55));
     NamedCommands.registerCommand("AngleAt1", new PivotAngleCommand(pivotSubsystem, 38));
     NamedCommands.registerCommand("AngleAt2", new PivotAngleCommand(pivotSubsystem, 40));
@@ -389,12 +382,6 @@ public class RobotContainer {
     //                         .alongWith(new ShooterRampUpCommand(shooterSubsystem,
     // ShooterMode.SHUTTLE)));
 
-    jacob
-        .povDown()
-        .onTrue(
-            new PivotAngleCommand(pivotSubsystem, 15)
-                .alongWith(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER)));
-
     // anthony.y().whileTrue(new TargetLockCommand(drivebaseSubsystem,
     // translationXSupplier,
     // translationYSupplier, Setpoints.SPEAKER));
@@ -425,13 +412,9 @@ public class RobotContainer {
                         intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // NOTE TO SHOOTER OR SERIALIZER
-    anthony
-        .b()
-        .onTrue(
-            new TransferNoteCommand(
-                shooterSubsystem, intakeSubsystem, pivotSubsystem, elevatorSubsystem));
+    anthony.b().onTrue(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
 
-    jacob.b().onTrue(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
+    jacob.b().onTrue(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
     jacob.a().onTrue(new ShootCommand(shooterSubsystem));
 
     // SPEAKER FROM SUBWOOFER
@@ -450,7 +433,9 @@ public class RobotContainer {
                     translationXSupplier,
                     translationYSupplier,
                     DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50)
-                .alongWith(new HeightCommand(elevatorSubsystem, 20)));
+                .alongWith(
+                    new ElevatorHeightCommand(
+                        elevatorSubsystem, 20))); // height should be set to a constant
 
     DoubleSupplier rotation =
         exponential(
