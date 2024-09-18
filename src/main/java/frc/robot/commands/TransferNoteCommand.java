@@ -9,12 +9,16 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class TransferNoteCommand extends SequentialCommandGroup {
 
   public TransferNoteCommand(
-    ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem, PivotSubsystem pivotSubsystem, ElevatorSubsystem elevatorSubsystem) {
-    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered()){
+      ShooterSubsystem shooterSubsystem,
+      IntakeSubsystem intakeSubsystem,
+      PivotSubsystem pivotSubsystem,
+      ElevatorSubsystem elevatorSubsystem) {
+    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered()) {
       addCommands(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
-    }
-    else if (shooterSubsystem.isShooterBeamBreakSensorTriggered()){
-      addCommands(new UnloadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem).andThen(new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
+    } else if (shooterSubsystem.isShooterBeamBreakSensorTriggered()) {
+      addCommands(
+          new UnloadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)
+              .andThen(new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
     }
   }
 }

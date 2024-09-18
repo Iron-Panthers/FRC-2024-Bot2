@@ -13,10 +13,15 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 public class UnloadShooterCommand extends Command {
   /** Creates a new UnloadShooterCommand. */
   ShooterSubsystem shooterSubsystem;
+
   PivotSubsystem pivotSubsystem;
   ElevatorSubsystem elevatorSubsystem;
   boolean pass;
-  public UnloadShooterCommand(ShooterSubsystem shooterSubsystem, PivotSubsystem pivotSubsystem, ElevatorSubsystem elevatorSubsystem) {
+
+  public UnloadShooterCommand(
+      ShooterSubsystem shooterSubsystem,
+      PivotSubsystem pivotSubsystem,
+      ElevatorSubsystem elevatorSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     this.pivotSubsystem = pivotSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
@@ -36,8 +41,8 @@ public class UnloadShooterCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered()&&pass==false){
-      pass=true;
+    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered() && pass == false) {
+      pass = true;
     }
   }
 
@@ -50,6 +55,6 @@ public class UnloadShooterCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !shooterSubsystem.isSerializerBeamBreakSensorTriggered()&&pass==true;
+    return !shooterSubsystem.isSerializerBeamBreakSensorTriggered() && pass == true;
   }
 }

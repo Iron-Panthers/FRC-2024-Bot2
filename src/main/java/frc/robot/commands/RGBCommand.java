@@ -11,8 +11,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.RGBSubsystem.RGBMessage;
-import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 import frc.robot.subsystems.VisionSubsystem;
 import java.util.Optional;
 
@@ -102,23 +102,24 @@ public class RGBCommand extends Command {
                   Constants.Lights.Colors.RED,
                   RGBSubsystem.PatternTypes.STROBE,
                   RGBSubsystem.MessagePriority.D_READY_TO_SHOOT));
-    } else if (shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SPEAKER) || //if it shot the note, it is not ready to shoot instead of relying on beam break sensor input
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SHUTTLE)||
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_VAR)||
-      pivotSubsystem.isAtTargetDegrees()){
-        readyToShootMsg.ifPresent(RGBMessage::expire);
-        readyToShootMsg = Optional.empty();
+    } else if (shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SPEAKER)
+        || // if it shot the note, it is not ready to shoot instead of relying on beam break sensor
+        // input
+        shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SHUTTLE)
+        || shooterSubsystem.getMode().equals(ShooterMode.SHOOT_VAR)
+        || pivotSubsystem.isAtTargetDegrees()) {
+      readyToShootMsg.ifPresent(RGBMessage::expire);
+      readyToShootMsg = Optional.empty();
     }
   }
 
-  private boolean isReadyToShootInSun(){
-    if(shooterSubsystem.isReadyToShoot()){
-      sensorCounter +=1;
+  private boolean isReadyToShootInSun() {
+    if (shooterSubsystem.isReadyToShoot()) {
+      sensorCounter += 1;
     }
-    if (sensorCounter>=38){//waits 0.75 seconds to varify the note did not leave robot
+    if (sensorCounter >= 38) { // waits 0.75 seconds to varify the note did not leave robot
       return true;
-    }
-    else{
+    } else {
       sensorCounter = 0;
       return false;
     }

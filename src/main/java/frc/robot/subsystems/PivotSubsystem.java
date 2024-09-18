@@ -120,7 +120,7 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   private static double rotationsToDegrees(double rotations) {
-    return rotations*Pivot.PIVOT_GEAR_RATIO;
+    return rotations * Pivot.PIVOT_GEAR_RATIO;
   }
 
   public void calculatePivotTargetDegrees(Pose2d pose, double xV, double yV) {
@@ -156,10 +156,9 @@ public class PivotSubsystem extends SubsystemBase {
     return targetDegrees - getCurrentAngle();
   }
 
-  public void setPower(double power){
+  public void setPower(double power) {
     this.power = power;
   }
-
 
   @Override
   public void periodic() {
@@ -178,6 +177,6 @@ public class PivotSubsystem extends SubsystemBase {
 
     pidVoltageOutput = MathUtil.clamp(pidOutput + getFeedForward(), -10, 10);
 
-    pivotMotor.set(getFeedForward()+power);
+    pivotMotor.set(getFeedForward() + power);
   }
 }

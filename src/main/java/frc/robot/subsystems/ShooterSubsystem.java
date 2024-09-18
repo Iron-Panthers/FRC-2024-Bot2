@@ -28,7 +28,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private DigitalInput shooterSensor;
   private DigitalInput serializerSensor;
 
-
   private ShooterMode shooterMode;
 
   // DEBUG
@@ -68,8 +67,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
-  public record ShooterPowers(double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
-    public ShooterPowers(double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
+  public record ShooterPowers(
+      double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
+    public ShooterPowers(
+        double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
       this.roller = roller;
       this.topToBottomRatio = topToBottomRatio;
       this.accelerator = accelerator;
@@ -85,7 +86,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // shooterSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
     // serializerSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
-
 
     // rollerMotorTop.getConfigurator().apply(new TalonFXConfiguration());
     // rollerMotorBottom.getConfigurator().apply(new TalonFXConfiguration());
@@ -131,23 +131,26 @@ public class ShooterSubsystem extends SubsystemBase {
           "Bottom roller amps", () -> rollerMotorBottom.getSupplyCurrent().getValueAsDouble());
       shooterTab.addString("mode", () -> shooterMode.toString());
 
-      ampRollerRatioEntry = shooterTab
-          .add("DEBUG Amp Top to Bottom Roller Ratio", 1)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .withProperties(Map.of("min", 0, "max", 1))
-          .withSize(3, 1)
-          .getEntry();
-      shooterSpeedEntry = shooterTab
-          .add("DEBUG Shooter Velocity", .5)
-          .withWidget(BuiltInWidgets.kNumberSlider)
-          .withProperties(Map.of("min", 0, "max", 90))
-          .withSize(3, 1)
-          .getEntry();
-      useDebugControls = shooterTab
-          .add("Use Debug Controls", false)
-          .withWidget(BuiltInWidgets.kToggleSwitch)
-          .withSize(2, 1)
-          .getEntry();
+      ampRollerRatioEntry =
+          shooterTab
+              .add("DEBUG Amp Top to Bottom Roller Ratio", 1)
+              .withWidget(BuiltInWidgets.kNumberSlider)
+              .withProperties(Map.of("min", 0, "max", 1))
+              .withSize(3, 1)
+              .getEntry();
+      shooterSpeedEntry =
+          shooterTab
+              .add("DEBUG Shooter Velocity", .5)
+              .withWidget(BuiltInWidgets.kNumberSlider)
+              .withProperties(Map.of("min", 0, "max", 90))
+              .withSize(3, 1)
+              .getEntry();
+      useDebugControls =
+          shooterTab
+              .add("Use Debug Controls", false)
+              .withWidget(BuiltInWidgets.kToggleSwitch)
+              .withSize(2, 1)
+              .getEntry();
     }
   }
 
@@ -182,8 +185,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setVariableVelocity(double velocity) {
-    if (shooterMode != ShooterMode.VARIABLE_VELOCITY)
-      shooterMode = ShooterMode.VARIABLE_VELOCITY;
+    if (shooterMode != ShooterMode.VARIABLE_VELOCITY) shooterMode = ShooterMode.VARIABLE_VELOCITY;
     this.variableVelocity = velocity;
   }
 

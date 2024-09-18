@@ -58,15 +58,12 @@ public class IntakeSubsystem extends SubsystemBase {
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
       tab.addDouble("intake voltage", () -> intakeMotor.getMotorVoltage().getValueAsDouble());
       tab.addString("Current Mode", () -> intakeMode.toString());
-
     }
   }
 
   public void setIntakeMode(IntakeMode intakeMode) {
     this.intakeMode = intakeMode;
   }
-
-
 
   private IntakeMode getIntakeMode() {
     return intakeMode;

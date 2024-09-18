@@ -75,470 +75,463 @@ import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    // The robot's subsystems and commands are defined here...
+  // The robot's subsystems and commands are defined here...
 
-    private final VisionSubsystem visionSubsystem = new VisionSubsystem();
+  private final VisionSubsystem visionSubsystem = new VisionSubsystem();
 
-    private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem(visionSubsystem);
+  private final DrivebaseSubsystem drivebaseSubsystem = new DrivebaseSubsystem(visionSubsystem);
 
-    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+  private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-    private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
+  private final PivotSubsystem pivotSubsystem = new PivotSubsystem();
 
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
-    private final RGBSubsystem rgbSubsystem = new RGBSubsystem();
+  private final RGBSubsystem rgbSubsystem = new RGBSubsystem();
 
-    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
-    private final NetworkWatchdogSubsystem networkWatchdogSubsystem = new NetworkWatchdogSubsystem(
-            Optional.of(rgbSubsystem));
+  private final NetworkWatchdogSubsystem networkWatchdogSubsystem =
+      new NetworkWatchdogSubsystem(Optional.of(rgbSubsystem));
 
-    private final CANWatchdogSubsystem canWatchdogSubsystem = new CANWatchdogSubsystem(rgbSubsystem);
+  private final CANWatchdogSubsystem canWatchdogSubsystem = new CANWatchdogSubsystem(rgbSubsystem);
 
-    /** controller 1 */
-    private final CommandXboxController jacob = new CommandXboxController(1);
-    /** controller 1 layer */
-    private final Layer jacobLayer = new Layer(jacob.rightBumper());
-    /** controller 0 */
-    private final CommandXboxController anthony = new CommandXboxController(0);
-    /** controller 0 layer */
-    // private final Layer anthonyLayer = new Layer(anthony.rightBumper());
+  /** controller 1 */
+  private final CommandXboxController jacob = new CommandXboxController(1);
+  /** controller 1 layer */
+  private final Layer jacobLayer = new Layer(jacob.rightBumper());
+  /** controller 0 */
+  private final CommandXboxController anthony = new CommandXboxController(0);
+  /** controller 0 layer */
+  // private final Layer anthonyLayer = new Layer(anthony.rightBumper());
 
-    /** the sendable chooser to select which auto to run. */
-    private final SendableChooser<Command> autoSelector;
+  /** the sendable chooser to select which auto to run. */
+  private final SendableChooser<Command> autoSelector;
 
-    private GenericEntry autoDelay;
+  private GenericEntry autoDelay;
 
-    private Pose2d desiredPose;
+  private Pose2d desiredPose;
 
-    private final ShuffleboardTab driverView = Shuffleboard.getTab("DriverView");
+  private final ShuffleboardTab driverView = Shuffleboard.getTab("DriverView");
 
-    /* drive joystick "y" is passed to x because controller is inverted */
-    private final DoubleSupplier translationXSupplier = () -> (-modifyAxis(anthony.getLeftY())
-            * Drive.MAX_VELOCITY_METERS_PER_SECOND);
-    private final DoubleSupplier translationYSupplier = () -> (-modifyAxis(anthony.getLeftX())
-            * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+  /* drive joystick "y" is passed to x because controller is inverted */
+  private final DoubleSupplier translationXSupplier =
+      () -> (-modifyAxis(anthony.getLeftY()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
+  private final DoubleSupplier translationYSupplier =
+      () -> (-modifyAxis(anthony.getLeftX()) * Drive.MAX_VELOCITY_METERS_PER_SECOND);
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    public RobotContainer() {
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public RobotContainer() {
 
-        // // reigster commands for pathplanner
-        // NamedCommands.registerCommand(
-        //         "IntakeCommand", new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
-        // NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem));
-        // NamedCommands.registerCommand(
-        //         "ShooterRampUpCommand",
-        //         new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
-        // NamedCommands.registerCommand("SetShooterToRamping", new SetRampModeCommand(shooterSubsystem));
-        // NamedCommands.registerCommand("AngleAtSpeaker", new PivotAngleCommand(pivotSubsystem, 55));
-        // NamedCommands.registerCommand("AngleAt1", new PivotAngleCommand(pivotSubsystem, 38));
-        // NamedCommands.registerCommand("AngleAt2", new PivotAngleCommand(pivotSubsystem, 40));
-        // NamedCommands.registerCommand("AngleAt3", new PivotAngleCommand(pivotSubsystem, 32));
-        // NamedCommands.registerCommand("AngleAtFar", new PivotAngleCommand(pivotSubsystem, 30));
-        // NamedCommands.registerCommand("AngleAtCenter1", new PivotAngleCommand(pivotSubsystem, 22.5));
-        // NamedCommands.registerCommand(
-        //         "Heading4Note1", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -90));
-        // NamedCommands.registerCommand(
-        //         "Heading4Note2", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -17));
-        // NamedCommands.registerCommand(
-        //         "AngleDriveBase", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -17));
-        // NamedCommands.registerCommand(
-        //         "MaintainShooterVelocity", new MaintainShooterCommand(shooterSubsystem));
-        // NamedCommands.registerCommand("HeadingLock", new HeadingTargetLock(drivebaseSubsystem));
-        // NamedCommands.registerCommand("LockForward", new HeadingAngle(drivebaseSubsystem, 0));
-        // NamedCommands.registerCommand(
-        //         "AutoPivotAngle", new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem));
-        // NamedCommands.registerCommand(
-        //         "AutoDrivebaseAngle", new TargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0));
-        // NamedCommands.registerCommand("AccelNote", new AccelNoteCommand(shooterSubsystem));
-        // NamedCommands.registerCommand(
-        //         "ZeroOrigin", new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope()));
-        // NamedCommands.registerCommand(
-        //         "ZeroSubwoofer1",
-        //         new InstantCommand(
-        //                 () -> drivebaseSubsystem.zeroGyroscopeOffset(
-        //                         DriverStation.getAlliance().get().equals(Alliance.Blue) ? -60 : 60)));
-        // NamedCommands.registerCommand(
-        //         "ZeroSubwoofer3",
-        //         new InstantCommand(
-        //                 () -> drivebaseSubsystem.zeroGyroscopeOffset(
-        //                         DriverStation.getAlliance().get().equals(Alliance.Blue) ? 60 : -60)));
-        // NamedCommands.registerCommand(
-        //         "recenterPose1",
-        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
-        //                 ? new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(1.12, 6.68), Rotation2d.fromDegrees(56.93))),
-        //                         drivebaseSubsystem)
-        //                 : new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(-56.93))),
-        //                         drivebaseSubsystem));
-        // NamedCommands.registerCommand(
-        //         "recenterPose2",
-        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
-        //                 ? new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(1.4, 5.56), Rotation2d.fromDegrees(0))),
-        //                         drivebaseSubsystem)
-        //                 : new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(15.2, 5.56), Rotation2d.fromDegrees(180))),
-        //                         drivebaseSubsystem));
-        // NamedCommands.registerCommand(
-        //         "recenterPose3",
-        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
-        //                 ? new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(1.12, 4.36), Rotation2d.fromDegrees(-98.90))),
-        //                         drivebaseSubsystem)
-        //                 : new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(98.90))),
-        //                         drivebaseSubsystem));
-        // NamedCommands.registerCommand(
-        //         "recenterPose4",
-        //         DriverStation.getAlliance().get().equals(Alliance.Blue)
-        //                 ? new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(1, 2.5), Rotation2d.fromDegrees(0))),
-        //                         drivebaseSubsystem)
-        //                 : new InstantCommand(
-        //                         () -> drivebaseSubsystem.resetOdometryToPose(
-        //                                 new Pose2d(new Translation2d(15.5, 2.5), Rotation2d.fromDegrees(180))),
-        //                         drivebaseSubsystem));
+    // reigster commands for pathplanner
+    NamedCommands.registerCommand(
+        "IntakeCommand", new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
+    NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooterSubsystem));
+    NamedCommands.registerCommand(
+        "ShooterRampUpCommand",
+        new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
+    NamedCommands.registerCommand("SetShooterToRamping", new SetRampModeCommand(shooterSubsystem));
+    NamedCommands.registerCommand("AngleAtSpeaker", new PivotAngleCommand(pivotSubsystem, 55));
+    NamedCommands.registerCommand("AngleAt1", new PivotAngleCommand(pivotSubsystem, 38));
+    NamedCommands.registerCommand("AngleAt2", new PivotAngleCommand(pivotSubsystem, 40));
+    NamedCommands.registerCommand("AngleAt3", new PivotAngleCommand(pivotSubsystem, 32));
+    NamedCommands.registerCommand("AngleAtFar", new PivotAngleCommand(pivotSubsystem, 30));
+    NamedCommands.registerCommand("AngleAtCenter1", new PivotAngleCommand(pivotSubsystem, 22.5));
+    NamedCommands.registerCommand(
+        "Heading4Note1", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -90));
+    NamedCommands.registerCommand(
+        "Heading4Note2", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -17));
+    NamedCommands.registerCommand(
+        "AngleDriveBase", new RotateAngleDriveCommand(drivebaseSubsystem, () -> 0, () -> 0, -17));
+    NamedCommands.registerCommand(
+        "MaintainShooterVelocity", new MaintainShooterCommand(shooterSubsystem));
+    NamedCommands.registerCommand("HeadingLock", new HeadingTargetLock(drivebaseSubsystem));
+    NamedCommands.registerCommand("LockForward", new HeadingAngle(drivebaseSubsystem, 0));
+    NamedCommands.registerCommand(
+        "AutoPivotAngle", new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem));
+    NamedCommands.registerCommand(
+        "AutoDrivebaseAngle", new TargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0));
+    NamedCommands.registerCommand("AccelNote", new AccelNoteCommand(shooterSubsystem));
+    NamedCommands.registerCommand(
+        "ZeroOrigin", new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope()));
+    NamedCommands.registerCommand(
+        "ZeroSubwoofer1",
+        new InstantCommand(
+            () ->
+                drivebaseSubsystem.zeroGyroscopeOffset(
+                    DriverStation.getAlliance().get().equals(Alliance.Blue) ? -60 : 60)));
+    NamedCommands.registerCommand(
+        "ZeroSubwoofer3",
+        new InstantCommand(
+            () ->
+                drivebaseSubsystem.zeroGyroscopeOffset(
+                    DriverStation.getAlliance().get().equals(Alliance.Blue) ? 60 : -60)));
+    NamedCommands.registerCommand(
+        "recenterPose1",
+        DriverStation.getAlliance().get().equals(Alliance.Blue)
+            ? new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(1.12, 6.68), Rotation2d.fromDegrees(56.93))),
+                drivebaseSubsystem)
+            : new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(-56.93))),
+                drivebaseSubsystem));
+    NamedCommands.registerCommand(
+        "recenterPose2",
+        DriverStation.getAlliance().get().equals(Alliance.Blue)
+            ? new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(1.4, 5.56), Rotation2d.fromDegrees(0))),
+                drivebaseSubsystem)
+            : new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(15.2, 5.56), Rotation2d.fromDegrees(180))),
+                drivebaseSubsystem));
+    NamedCommands.registerCommand(
+        "recenterPose3",
+        DriverStation.getAlliance().get().equals(Alliance.Blue)
+            ? new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(1.12, 4.36), Rotation2d.fromDegrees(-98.90))),
+                drivebaseSubsystem)
+            : new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(15.6, 6.68), Rotation2d.fromDegrees(98.90))),
+                drivebaseSubsystem));
+    NamedCommands.registerCommand(
+        "recenterPose4",
+        DriverStation.getAlliance().get().equals(Alliance.Blue)
+            ? new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(1, 2.5), Rotation2d.fromDegrees(0))),
+                drivebaseSubsystem)
+            : new InstantCommand(
+                () ->
+                    drivebaseSubsystem.resetOdometryToPose(
+                        new Pose2d(new Translation2d(15.5, 2.5), Rotation2d.fromDegrees(180))),
+                drivebaseSubsystem));
 
-        // Set up the default command for the drivetrain.
-        // The controls are for field-oriented driving:
-        // Left stick Y axis -> forward and backwards movement
-        // Left stick X axis -> left and right movement
-        // Right stick X axis -> rotation
-        drivebaseSubsystem.setDefaultCommand(
-                new DefaultDriveCommand(
-                        drivebaseSubsystem,
-                        translationXSupplier,
-                        translationYSupplier,
-                        // anthony.rightBumper(),
-                        anthony.leftBumper()));
+    // Set up the default command for the drivetrain.
+    // The controls are for field-oriented driving:
+    // Left stick Y axis -> forward and backwards movement
+    // Left stick X axis -> left and right movement
+    // Right stick X axis -> rotation
+    drivebaseSubsystem.setDefaultCommand(
+        new DefaultDriveCommand(
+            drivebaseSubsystem,
+            translationXSupplier,
+            translationYSupplier,
+            // anthony.rightBumper(),
+            anthony.leftBumper()));
 
-        rgbSubsystem.setDefaultCommand(
-                new RGBCommand(
-                        shooterSubsystem,
-                        intakeSubsystem,
-                        rgbSubsystem,
-                        pivotSubsystem,
-                        drivebaseSubsystem,
-                        visionSubsystem));
+    rgbSubsystem.setDefaultCommand(
+        new RGBCommand(
+            shooterSubsystem,
+            intakeSubsystem,
+            rgbSubsystem,
+            pivotSubsystem,
+            drivebaseSubsystem,
+            visionSubsystem));
 
-        // pivotSubsystem.setDefaultCommand(
-        // new PivotManualCommand(pivotSubsystem, () -> -jacob.getLeftY()));
+    // pivotSubsystem.setDefaultCommand(
+    // new PivotManualCommand(pivotSubsystem, () -> -jacob.getLeftY()));
 
-        // Configure the button bindings
-        configureButtonBindings();
+    // Configure the button bindings
+    configureButtonBindings();
 
-        autoSelector = AutoBuilder.buildAutoChooser();
+    autoSelector = AutoBuilder.buildAutoChooser();
 
-        SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
-        SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
-        SmartDashboard.putBoolean("don't init swerve modules", Config.DISABLE_SWERVE_INIT);
+    SmartDashboard.putBoolean("is comp bot", MacUtil.IS_COMP_BOT);
+    SmartDashboard.putBoolean("show debug data", Config.SHOW_SHUFFLEBOARD_DEBUG_DATA);
+    SmartDashboard.putBoolean("don't init swerve modules", Config.DISABLE_SWERVE_INIT);
 
-        desiredPose = new Pose2d();
-        SmartDashboard.putString(
-                "desired pose",
-                String.format(
-                        "(%2f %2f %2f)",
-                        desiredPose.getX(), desiredPose.getY(), desiredPose.getRotation().getDegrees()));
+    desiredPose = new Pose2d();
+    SmartDashboard.putString(
+        "desired pose",
+        String.format(
+            "(%2f %2f %2f)",
+            desiredPose.getX(), desiredPose.getY(), desiredPose.getRotation().getDegrees()));
 
-        if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
-            driverView.addDouble("Shoot Var Velocity", () -> shooterSubsystem.variableVelocity);
-            driverView.addString("ShooterMode", () -> shooterSubsystem.getMode().toString());
-            driverView.addDouble("Pivot Angle Error", () -> pivotSubsystem.getAngularError());
-            driverView.addDouble("Drivebase Angle Error", () -> drivebaseSubsystem.getAngularError());
-        }
-
-        // Create and put autonomous selector to dashboard
-        setupAutonomousCommands();
+    if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
+      driverView.addDouble("Shoot Var Velocity", () -> shooterSubsystem.variableVelocity);
+      driverView.addString("ShooterMode", () -> shooterSubsystem.getMode().toString());
+      driverView.addDouble("Pivot Angle Error", () -> pivotSubsystem.getAngularError());
+      driverView.addDouble("Drivebase Angle Error", () -> drivebaseSubsystem.getAngularError());
     }
 
-    /**
-     * Use this method to do things as the drivers gain control of the robot. We use
-     * it to vibrate the
-     * driver b controller to notice accidental swaps.
-     *
-     * <p>
-     * Please use this very, very sparingly. It doesn't exist by default for good
-     * reason.
-     */
-    public void containerTeleopInit() {
-        // runs when teleop happens
-        CommandScheduler.getInstance().schedule(new VibrateHIDCommand(jacob.getHID(), 5, .5));
-        // vibrate controller at 27 seconds left
-        CommandScheduler.getInstance()
-                .schedule(
-                        new WaitCommand(108)
-                                .andThen(
-                                        new ParallelCommandGroup(
-                                                new VibrateHIDCommand(anthony.getHID(), 3, 0.4),
-                                                new VibrateHIDCommand(jacob.getHID(), 3, 0.4))));
-    }
+    // Create and put autonomous selector to dashboard
+    setupAutonomousCommands();
+  }
 
-    /**
-     * Use this method to do things as soon as the robot starts being used. We use
-     * it to stop doing
-     * things that could be harmful or undesirable during game play--rebooting the
-     * network switch is a
-     * good example. Subsystems need to be explicitly wired up to this method.
-     *
-     * <p>
-     * Depending on which mode the robot is enabled in, this will either be called
-     * before auto or
-     * before teleop, whichever is first.
-     *
-     * <p>
-     * Please use this very, very sparingly. It doesn't exist by default for good
-     * reason.
-     */
-    public void containerMatchStarting() {
-        // runs when the match starts
-        networkWatchdogSubsystem.matchStarting();
-        canWatchdogSubsystem.matchStarting();
-    }
+  /**
+   * Use this method to do things as the drivers gain control of the robot. We use it to vibrate the
+   * driver b controller to notice accidental swaps.
+   *
+   * <p>Please use this very, very sparingly. It doesn't exist by default for good reason.
+   */
+  public void containerTeleopInit() {
+    // runs when teleop happens
+    CommandScheduler.getInstance().schedule(new VibrateHIDCommand(jacob.getHID(), 5, .5));
+    // vibrate controller at 27 seconds left
+    CommandScheduler.getInstance()
+        .schedule(
+            new WaitCommand(108)
+                .andThen(
+                    new ParallelCommandGroup(
+                        new VibrateHIDCommand(anthony.getHID(), 3, 0.4),
+                        new VibrateHIDCommand(jacob.getHID(), 3, 0.4))));
+  }
 
-    /**
-     * Use this method to define your button->command mappings. Buttons can be
-     * created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-     * it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
-    private void configureButtonBindings() {
-        // vibrate jacob controller when in layer
-        jacobLayer.whenChanged(
-                (enabled) -> {
-                    final double power = enabled ? .1 : 0;
-                    jacob.getHID().setRumble(RumbleType.kLeftRumble, power);
-                    jacob.getHID().setRumble(RumbleType.kRightRumble, power);
-                });
+  /**
+   * Use this method to do things as soon as the robot starts being used. We use it to stop doing
+   * things that could be harmful or undesirable during game play--rebooting the network switch is a
+   * good example. Subsystems need to be explicitly wired up to this method.
+   *
+   * <p>Depending on which mode the robot is enabled in, this will either be called before auto or
+   * before teleop, whichever is first.
+   *
+   * <p>Please use this very, very sparingly. It doesn't exist by default for good reason.
+   */
+  public void containerMatchStarting() {
+    // runs when the match starts
+    networkWatchdogSubsystem.matchStarting();
+    canWatchdogSubsystem.matchStarting();
+  }
 
-        anthony
-                .start()
-                .onTrue(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
+  /**
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   */
+  private void configureButtonBindings() {
+    // vibrate jacob controller when in layer
+    jacobLayer.whenChanged(
+        (enabled) -> {
+          final double power = enabled ? .1 : 0;
+          jacob.getHID().setRumble(RumbleType.kLeftRumble, power);
+          jacob.getHID().setRumble(RumbleType.kRightRumble, power);
+        });
 
-        jacob
-                .start()
-                .onTrue(new InstantCommand(drivebaseSubsystem::smartZeroGyroscope, drivebaseSubsystem));
+    anthony
+        .start()
+        .onTrue(new InstantCommand(drivebaseSubsystem::zeroGyroscope, drivebaseSubsystem));
 
-        // STOP INTAKE-SHOOTER
-        jacob
-                .x()
-                .onTrue(
-                        new StopShooterCommand(shooterSubsystem)
-                                .alongWith(new StopIntakeCommand(intakeSubsystem)));
-        // OUTTAKE
-        jacob.rightBumper().onTrue(new OuttakeCommand(intakeSubsystem));
+    jacob
+        .start()
+        .onTrue(new InstantCommand(drivebaseSubsystem::smartZeroGyroscope, drivebaseSubsystem));
 
-        // INTAKE
-        anthony
-                .leftBumper()
-                .onTrue(new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
+    // STOP INTAKE-SHOOTER
+    jacob
+        .x()
+        .onTrue(
+            new StopShooterCommand(shooterSubsystem)
+                .alongWith(new StopIntakeCommand(intakeSubsystem)));
+    // OUTTAKE
+    jacob.rightBumper().onTrue(new OuttakeCommand(intakeSubsystem));
 
-        jacob
-                .leftBumper()
-                .onTrue(new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
+    // INTAKE
+    anthony
+        .leftBumper()
+        .onTrue(new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
 
-        // SHOOT
-        anthony
-                .rightBumper()
-                .onTrue(
-                        new AccelNoteCommand(shooterSubsystem)
-                                .andThen(new ShootCommand(shooterSubsystem))
-                                .andThen(
-                                        new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
+    jacob
+        .leftBumper()
+        .onTrue(new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem));
 
-        // SHOOT OVERRIDE
-        jacob
-                .rightTrigger()
-                .onTrue(new AccelNoteCommand(shooterSubsystem)
-                        .andThen(new ShootCommand(shooterSubsystem)));
+    // SHOOT
+    anthony
+        .rightBumper()
+        .onTrue(
+            new AccelNoteCommand(shooterSubsystem)
+                .andThen(new ShootCommand(shooterSubsystem))
+                .andThen(
+                    new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
 
-        anthony.rightStick().onTrue(new DefenseModeCommand(drivebaseSubsystem));
-        anthony.leftStick().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
-        jacob
-                .y()
-                .whileTrue(
-                        new TargetLockCommand(drivebaseSubsystem, translationXSupplier, translationYSupplier)
-                                .alongWith(new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem)));
+    // SHOOT OVERRIDE
+    jacob
+        .rightTrigger()
+        .onTrue(new AccelNoteCommand(shooterSubsystem).andThen(new ShootCommand(shooterSubsystem)));
 
-        // jacob
-        //         .a()
-        //         .onTrue(
-        //                 new RotateAngleDriveCommand(
-        //                         drivebaseSubsystem,
-        //                         translationXSupplier,
-        //                         translationYSupplier,
-        //                         DriverStation.getAlliance().get().equals(Alliance.Red) ? -40 : 40)
-        //                         .alongWith(new PivotAngleCommand(pivotSubsystem, 60))
-        //                         .alongWith(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.SHUTTLE)));
+    anthony.rightStick().onTrue(new DefenseModeCommand(drivebaseSubsystem));
+    anthony.leftStick().onTrue(new HaltDriveCommandsCommand(drivebaseSubsystem));
+    jacob
+        .y()
+        .whileTrue(
+            new TargetLockCommand(drivebaseSubsystem, translationXSupplier, translationYSupplier)
+                .alongWith(new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem)));
 
-        jacob
-                .povDown()
-                .onTrue(
-                        new PivotAngleCommand(pivotSubsystem, 15)
-                                .alongWith(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER)));
+    // jacob
+    //         .a()
+    //         .onTrue(
+    //                 new RotateAngleDriveCommand(
+    //                         drivebaseSubsystem,
+    //                         translationXSupplier,
+    //                         translationYSupplier,
+    //                         DriverStation.getAlliance().get().equals(Alliance.Red) ? -40 : 40)
+    //                         .alongWith(new PivotAngleCommand(pivotSubsystem, 60))
+    //                         .alongWith(new ShooterRampUpCommand(shooterSubsystem,
+    // ShooterMode.SHUTTLE)));
 
-        // anthony.y().whileTrue(new TargetLockCommand(drivebaseSubsystem,
-        // translationXSupplier,
-        // translationYSupplier, Setpoints.SPEAKER));
+    jacob
+        .povDown()
+        .onTrue(
+            new PivotAngleCommand(pivotSubsystem, 15)
+                .alongWith(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER)));
 
-        // DoubleSupplier variableVelocityRate = () -> modifyAxis(-jacob.getRightY());
+    // anthony.y().whileTrue(new TargetLockCommand(drivebaseSubsystem,
+    // translationXSupplier,
+    // translationYSupplier, Setpoints.SPEAKER));
 
-        // new Trigger(() -> Math.abs(variableVelocityRate.getAsDouble()) > 0.07)
-        // .onTrue(new VariableShooterCommand(shooterSubsystem, variableVelocityRate));
+    // DoubleSupplier variableVelocityRate = () -> modifyAxis(-jacob.getRightY());
 
-        DoubleSupplier pivotManualRate = () -> modifyAxis(-jacob.getLeftY());
+    // new Trigger(() -> Math.abs(variableVelocityRate.getAsDouble()) > 0.07)
+    // .onTrue(new VariableShooterCommand(shooterSubsystem, variableVelocityRate));
 
-        new Trigger(() -> pivotManualRate.getAsDouble() > 0.07)
-                .onTrue(new PivotManualCommand(pivotSubsystem, pivotManualRate));
+    DoubleSupplier pivotManualRate = () -> modifyAxis(-jacob.getLeftY());
 
-        // SOURCE
-        anthony
-                .y()
-                .onTrue(
-                        new RotateAngleDriveCommand(
-                                drivebaseSubsystem,
-                                translationXSupplier,
-                                translationYSupplier,
-                                DriverStation.getAlliance().get().equals(Alliance.Red)
-                                        ? -Setpoints.SOURCE_DEGREES
-                                        : Setpoints.SOURCE_DEGREES)
-                                .alongWith(
-                                        new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
+    new Trigger(() -> pivotManualRate.getAsDouble() > 0.07)
+        .onTrue(new PivotManualCommand(pivotSubsystem, pivotManualRate));
 
-        // NOTE TO SHOOTER OR SERIALIZER
-        anthony
-                .b()
-                .onTrue(
-                        new TransferNoteCommand(shooterSubsystem, intakeSubsystem, pivotSubsystem, elevatorSubsystem));
+    // SOURCE
+    anthony
+        .y()
+        .onTrue(
+            new RotateAngleDriveCommand(
+                    drivebaseSubsystem,
+                    translationXSupplier,
+                    translationYSupplier,
+                    DriverStation.getAlliance().get().equals(Alliance.Red)
+                        ? -Setpoints.SOURCE_DEGREES
+                        : Setpoints.SOURCE_DEGREES)
+                .alongWith(
+                    new AdvancedIntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem)));
 
-        jacob
-                .b()
-                .onTrue(
-                        new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
-        jacob
-                .a()
-                .onTrue(
-                        new ShootCommand(shooterSubsystem));
+    // NOTE TO SHOOTER OR SERIALIZER
+    anthony
+        .b()
+        .onTrue(
+            new TransferNoteCommand(
+                shooterSubsystem, intakeSubsystem, pivotSubsystem, elevatorSubsystem));
 
-        // SPEAKER FROM SUBWOOFER
-        anthony
-                .a()
-                .onTrue(
-                        new RotateAngleDriveCommand(
-                                drivebaseSubsystem, translationXSupplier, translationYSupplier, 0)
-                                .alongWith(new PivotAngleCommand(pivotSubsystem, 53.1)));
+    jacob.b().onTrue(new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER));
+    jacob.a().onTrue(new ShootCommand(shooterSubsystem));
 
-        anthony
-                .x()
-                .onTrue(
-                        new RotateAngleDriveCommand(
-                                drivebaseSubsystem,
-                                translationXSupplier,
-                                translationYSupplier,
-                                DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50)
-                                .alongWith(new HeightCommand(elevatorSubsystem, 20)));
+    // SPEAKER FROM SUBWOOFER
+    anthony
+        .a()
+        .onTrue(
+            new RotateAngleDriveCommand(
+                    drivebaseSubsystem, translationXSupplier, translationYSupplier, 0)
+                .alongWith(new PivotAngleCommand(pivotSubsystem, 53.1)));
 
-        DoubleSupplier rotation = exponential(
-                () -> ControllerUtil.deadband(
-                        (anthony.getRightTriggerAxis() + -anthony.getLeftTriggerAxis()), .1),
-                2);
+    anthony
+        .x()
+        .onTrue(
+            new RotateAngleDriveCommand(
+                    drivebaseSubsystem,
+                    translationXSupplier,
+                    translationYSupplier,
+                    DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50)
+                .alongWith(new HeightCommand(elevatorSubsystem, 20)));
 
-        DoubleSupplier rotationVelocity = () -> -rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-                * 0.8;
+    DoubleSupplier rotation =
+        exponential(
+            () ->
+                ControllerUtil.deadband(
+                    (anthony.getRightTriggerAxis() + -anthony.getLeftTriggerAxis()), .1),
+            2);
 
-        new Trigger(() -> Math.abs(rotation.getAsDouble()) > 0)
-                .whileTrue(
-                        new RotateVelocityDriveCommand(
-                                drivebaseSubsystem,
-                                translationXSupplier,
-                                translationYSupplier,
-                                rotationVelocity,
-                                anthony.rightBumper()));
+    DoubleSupplier rotationVelocity =
+        () -> -rotation.getAsDouble() * Drive.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * 0.8;
 
-        new Trigger(
-                () -> Util.vectorMagnitude(anthony.getRightY(), anthony.getRightX()) > Drive.ROTATE_VECTOR_MAGNITUDE)
-                .onTrue(
-                        new RotateVectorDriveCommand(
-                                drivebaseSubsystem,
-                                translationXSupplier,
-                                translationYSupplier,
-                                anthony::getRightY,
-                                anthony::getRightX,
-                                anthony.rightBumper()));
-    }
+    new Trigger(() -> Math.abs(rotation.getAsDouble()) > 0)
+        .whileTrue(
+            new RotateVelocityDriveCommand(
+                drivebaseSubsystem,
+                translationXSupplier,
+                translationYSupplier,
+                rotationVelocity,
+                anthony.rightBumper()));
 
-    /**
-     * Adds all autonomous routines to the autoSelector, and places the autoSelector
-     * on Shuffleboard.
-     */
-    private void setupAutonomousCommands() {
-        driverView.addString("NOTES", () -> "...win?\nor not.").withSize(4, 1).withPosition(7, 2);
+    new Trigger(
+            () ->
+                Util.vectorMagnitude(anthony.getRightY(), anthony.getRightX())
+                    > Drive.ROTATE_VECTOR_MAGNITUDE)
+        .onTrue(
+            new RotateVectorDriveCommand(
+                drivebaseSubsystem,
+                translationXSupplier,
+                translationYSupplier,
+                anthony::getRightY,
+                anthony::getRightX,
+                anthony.rightBumper()));
+  }
 
-        driverView.add("auto selector", autoSelector).withSize(4, 1).withPosition(7, 0);
+  /**
+   * Adds all autonomous routines to the autoSelector, and places the autoSelector on Shuffleboard.
+   */
+  private void setupAutonomousCommands() {
+    driverView.addString("NOTES", () -> "...win?\nor not.").withSize(4, 1).withPosition(7, 2);
 
-        autoDelay = driverView
-                .add("auto delay", 0)
-                .withWidget(BuiltInWidgets.kNumberSlider)
-                .withProperties(Map.of("min", 0, "max", 15, "block increment", .1))
-                .withSize(4, 1)
-                .withPosition(7, 1)
-                .getEntry();
-    }
+    driverView.add("auto selector", autoSelector).withSize(4, 1).withPosition(7, 0);
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        double delay = autoDelay.getDouble(0);
-        return delay == 0
-                ? autoSelector.getSelected()
-                : new WaitCommand(delay).andThen(autoSelector.getSelected());
-    }
+    autoDelay =
+        driverView
+            .add("auto delay", 0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 15, "block increment", .1))
+            .withSize(4, 1)
+            .withPosition(7, 1)
+            .getEntry();
+  }
 
-    /**
-     * applies deadband and squares axis
-     *
-     * @param value the axis value to be modified
-     * @return the modified axis values
-     */
-    private static double modifyAxis(double value) {
-        // Deadband
-        value = ControllerUtil.deadband(value, 0.07);
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    double delay = autoDelay.getDouble(0);
+    return delay == 0
+        ? autoSelector.getSelected()
+        : new WaitCommand(delay).andThen(autoSelector.getSelected());
+  }
 
-        // Square the axis
-        value = Math.copySign(value * value, value);
+  /**
+   * applies deadband and squares axis
+   *
+   * @param value the axis value to be modified
+   * @return the modified axis values
+   */
+  private static double modifyAxis(double value) {
+    // Deadband
+    value = ControllerUtil.deadband(value, 0.07);
 
-        return value;
-    }
+    // Square the axis
+    value = Math.copySign(value * value, value);
 
-    private static DoubleSupplier exponential(DoubleSupplier supplier, double exponential) {
-        return () -> {
-            double val = supplier.getAsDouble();
-            return Math.copySign(Math.pow(val, exponential), val);
-        };
-    }
+    return value;
+  }
+
+  private static DoubleSupplier exponential(DoubleSupplier supplier, double exponential) {
+    return () -> {
+      double val = supplier.getAsDouble();
+      return Math.copySign(Math.pow(val, exponential), val);
+    };
+  }
 }

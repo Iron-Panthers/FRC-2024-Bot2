@@ -13,14 +13,18 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 public class LoadShooterCommand extends Command {
   /** Creates a new LoadShooterCommand. */
   ShooterSubsystem shooterSubsystem;
+
   ElevatorSubsystem elevatorSubsystem;
   PivotSubsystem pivotSubsystem;
-  public LoadShooterCommand(ShooterSubsystem shooterSubsystem, PivotSubsystem pivotSubsystem, ElevatorSubsystem elevatorSubsystem) {
+
+  public LoadShooterCommand(
+      ShooterSubsystem shooterSubsystem,
+      PivotSubsystem pivotSubsystem,
+      ElevatorSubsystem elevatorSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     this.elevatorSubsystem = elevatorSubsystem;
     this.pivotSubsystem = pivotSubsystem;
     addRequirements(elevatorSubsystem, shooterSubsystem, pivotSubsystem);
-
   }
 
   // Called when the command is initially scheduled.
