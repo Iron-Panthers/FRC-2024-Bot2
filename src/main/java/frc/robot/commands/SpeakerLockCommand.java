@@ -7,7 +7,8 @@ import frc.robot.subsystems.PivotSubsystem;
 public class SpeakerLockCommand extends ParallelCommandGroup {
   public SpeakerLockCommand(DrivebaseSubsystem drivebaseSubsystem, PivotSubsystem pivotSubsystem) {
     addCommands(
-        new TargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0),
-        new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem));
+        new TargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0)
+        // new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem)
+        );
   }
 }

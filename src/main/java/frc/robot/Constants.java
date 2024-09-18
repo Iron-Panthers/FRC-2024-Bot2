@@ -89,7 +89,7 @@ public final class Constants {
   }
 
   public static final class Drive {
-    public static final int PIGEON_PORT = 0; // placeholder
+    public static final int PIGEON_PORT = 0; // FIXME
     public static final String SWERVE_CANBUS = "rio"; // placeholder
 
     // max voltage delivered to drivebase
@@ -118,7 +118,8 @@ public final class Constants {
     public static final class Dims {
       // FIXME validate with hardware
       public static final double TRACKWIDTH_METERS =
-          .5207; // 20.5 inches (source: cad) converted to meters
+          .5207; // 20.5 inches (source: cad) converted to
+      // meters
       public static final double WHEELBASE_METERS = TRACKWIDTH_METERS; // robot is square
 
       public static final double BUMPER_WIDTH_METERS_X = .9779;
@@ -126,34 +127,34 @@ public final class Constants {
     }
 
     /*
-     module layout:
-        |──────
-     |->│#   ##steer motor
-     │  │  ##cancoder
-     │  │##drive motor
-     module number
-
-     steer is always left
-     from corner perspective
-
-     robot visualization:
-    |──────────────────────|
-    │2   10          04   1│
-    │  25              24  │
-    │11     S      D     03│
-    │     D          S     │
-    │                      │
-    │                      │
-    │     S          D     │
-    │       D      S       │
-    │12    |────────|    02│
-    │  26  │        │  27  │
-    │3   13│  batt  │01   4│
-    |──────┴───┬┬───┴──────|
-               ││
-               ││
-               ▼▼
-         software front
+     * module layout:
+     * |──────
+     * |->│# ##steer motor
+     * │ │ ##cancoder
+     * │ │##drive motor
+     * module number
+     *
+     * steer is always left
+     * from corner perspective
+     *
+     * robot visualization:
+     * |──────────────────────|
+     * │2 10 04 1│
+     * │ 25 24 │
+     * │11 S D 03│
+     * │ D S │
+     * │ │
+     * │ │
+     * │ S D │
+     * │ D S │
+     * │12 |────────| 02│
+     * │ 26 │ │ 27 │
+     * │3 13│ batt │01 4│
+     * |──────┴───┬┬───┴──────|
+     * ││
+     * ││
+     * ▼▼
+     * software front
      */
 
     public static final class Modules {
@@ -244,6 +245,8 @@ public final class Constants {
       public static final IntakePowers INTAKE = new IntakePowers(.95, .75);
       public static final IntakePowers HOLD = new IntakePowers(0, 0d);
       public static final IntakePowers REVERSE = new IntakePowers(-.5, -.5);
+      public static final IntakePowers SHOOT_SPEAKER = new IntakePowers(0, 0.7);
+      public static final IntakePowers SHOOT_AMP = new IntakePowers(0, -1);
     }
 
     public static final boolean IS_BEAMBREAK = true;
@@ -251,43 +254,43 @@ public final class Constants {
 
   public static final class Shooter {
     public static final class Ports {
-      public static final int TOP_SHOOTER_MOTOR_PORT = 20;
-      public static final int BOTTOM_SHOOTER_MOTOR_PORT = 19;
+      public static final int TOP_SHOOTER_MOTOR_PORT = 0;
+      public static final int BOTTOM_SHOOTER_MOTOR_PORT = 5;
       public static final int ACCELERATOR_MOTOR_PORT = 17;
       public static final int BEAM_BREAK_SENSOR_PORT = 8;
     }
 
     public static final class Modes {
       public static final ShooterSubsystem.ShooterPowers INTAKE =
-          new ShooterSubsystem.ShooterPowers(76, 1, .15);
+          new ShooterSubsystem.ShooterPowers(76, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers IDLE =
-          new ShooterSubsystem.ShooterPowers(0, 0, 0);
+          new ShooterSubsystem.ShooterPowers(0, 0, 0, 0);
+      public static final ShooterSubsystem.ShooterPowers RAMP_AMP =
+          new ShooterSubsystem.ShooterPowers(0, 0, 0, 0);
       public static final ShooterSubsystem.ShooterPowers RAMP_SPEAKER =
-          new ShooterSubsystem.ShooterPowers(76, 1, 0);
-      public static final ShooterSubsystem.ShooterPowers RAMP_AMP_BACK =
-          new ShooterSubsystem.ShooterPowers(25, 0.4, 0);
-      public static final ShooterSubsystem.ShooterPowers RAMP_AMP_FRONT =
-          new ShooterSubsystem.ShooterPowers(10, 2.5, 0);
+          new ShooterSubsystem.ShooterPowers(76, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers SHOOT_SPEAKER =
-          new ShooterSubsystem.ShooterPowers(76, 1, .5);
+          new ShooterSubsystem.ShooterPowers(76, 1, .5, 0);
       public static final ShooterSubsystem.ShooterPowers TARGET_LOCK =
-          new ShooterSubsystem.ShooterPowers(0, 1, 0);
-      public static final ShooterSubsystem.ShooterPowers SHOOT_AMP_BACK =
-          new ShooterSubsystem.ShooterPowers(25, 0.4, .5);
-      public static final ShooterSubsystem.ShooterPowers SHOOT_AMP_FORWARD =
-          new ShooterSubsystem.ShooterPowers(8, 2.5, .5);
+          new ShooterSubsystem.ShooterPowers(0, 1, 0, 0);
+      public static final ShooterSubsystem.ShooterPowers SHOOT_AMP =
+          new ShooterSubsystem.ShooterPowers(0, 0, 0, -1);
       public static final ShooterSubsystem.ShooterPowers MAINTAIN_VELOCITY =
-          new ShooterSubsystem.ShooterPowers(40, 1, 0);
+          new ShooterSubsystem.ShooterPowers(40, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers SHUTTLE =
-          new ShooterSubsystem.ShooterPowers(30, 1, 0);
+          new ShooterSubsystem.ShooterPowers(30, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers SHOOT_SHUTTLE =
-          new ShooterSubsystem.ShooterPowers(30, 1, 0.5);
+          new ShooterSubsystem.ShooterPowers(30, 1, 0.5, 0);
       public static final ShooterSubsystem.ShooterPowers ACCEL_SECURE =
-          new ShooterSubsystem.ShooterPowers(76, 1, 0.5);
+          new ShooterSubsystem.ShooterPowers(76, 1, 0.5, 0);
       public static final ShooterSubsystem.ShooterPowers VARIABLE_VELOCITY =
-          new ShooterSubsystem.ShooterPowers(30, 1, 0);
+          new ShooterSubsystem.ShooterPowers(30, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers SHOOT_VAR =
-          new ShooterSubsystem.ShooterPowers(30, 1, 0.5);
+          new ShooterSubsystem.ShooterPowers(30, 1, 0.5, 0);
+      public static final ShooterSubsystem.ShooterPowers LOAD_SHOOTER =
+          new ShooterSubsystem.ShooterPowers(0, 0, 0.5, 0.5);
+      public static final ShooterSubsystem.ShooterPowers SHOOTER_UNLOAD =
+          new ShooterSubsystem.ShooterPowers(0, 0, -0.5, -0.5);
     }
 
     public static final Slot0Configs ROLLER_PID_CONFIG =
@@ -346,8 +349,9 @@ public final class Constants {
     public static final int EPSILON = 2;
 
     public static final double PIVOT_CANCODER_OFFSET = -0.625977 + (0.070139 - 0.031250);
-    public static final double PIVOT_GEAR_RATIO =
-        (60 / 8) * (60 / 16) * (72 / 15); // FIXME placeholder values
+    /** degrees per rotation */
+    public static final double PIVOT_GEAR_RATIO = 5.33333; // not used
+    // values
     public static final double CENTER_OF_ROBOT_TO_BUMPER = 0.41275;
 
     public static final Pose2d RED_SPEAKER_POSE = new Pose2d(16.45, 5.5, null);
@@ -367,30 +371,32 @@ public final class Constants {
 
     public static final List<VisionSource> VISION_SOURCES =
         List.of(
-            /*new VisionSource(
-                "frontCam",
-                new Transform3d(
-                    new Translation3d(
-                        -0.305, // front/back
-                        -0.2286, // left/right
-                        -0.2159 // up/down
-                        ),
-                    new Rotation3d(
-                        0,
-                        Math.toRadians(30), // angle up/down
-                        Math.toRadians(180)))),
-            new VisionSource(
-                "backCam",
-                new Transform3d(
-                    new Translation3d(
-                        -0.2796, // front/back
-                        -0.2286, // left/right
-                        -0.2159 // up/down
-                        ),
-                    new Rotation3d(
-                        0,
-                        Math.toRadians(30), // angle up/down
-                        Math.toRadians(180)))),*/
+            /*
+             * new VisionSource(
+             * "frontCam",
+             * new Transform3d(
+             * new Translation3d(
+             * -0.305, // front/back
+             * -0.2286, // left/right
+             * -0.2159 // up/down
+             * ),
+             * new Rotation3d(
+             * 0,
+             * Math.toRadians(30), // angle up/down
+             * Math.toRadians(180)))),
+             * new VisionSource(
+             * "backCam",
+             * new Transform3d(
+             * new Translation3d(
+             * -0.2796, // front/back
+             * -0.2286, // left/right
+             * -0.2159 // up/down
+             * ),
+             * new Rotation3d(
+             * 0,
+             * Math.toRadians(30), // angle up/down
+             * Math.toRadians(180)))),
+             */
             new VisionSource(
                 "backUpCam",
                 new Transform3d(
@@ -565,8 +571,25 @@ public final class Constants {
     public static final double AMP_TARGET_ANGLE = 0;
     public static final PathConstraints CONSTRAINTS =
         new PathConstraints(3, 3, Units.degreesToRadians(540), Units.degreesToRadians(720));
+  }
+
+  public static class Elevator {
+    public static final class Ports {
+      public static final int ARM_MOTOR_PORT = 18;
+      public static final int ELEVATOR_MOTOR_PORT = 28;
     }
-          public static class Elevator{ //Placeholder elevator constant (update as needed)
-            public static final double GEAR_RATIO = 0;
+    /** inches per rotation */
+    public static final double ELEVATOR_GEAR_RATIO = 0.0906065;
+    /** FIXME */
+    public static final double MAX_HEIGHT = 50;
+    /** FIXME */
+    public static final double ELEVATOR_FEEDFORWARD = 0.01;
+
+    public static final class Arm {
+      /** FIXME */
+      public static final double MAX_ANGLE = 50;
+      /** inches per rotation */
+      public static final double ARM_GEAR_RATIO = 0.0231481481;
     }
+  }
 }

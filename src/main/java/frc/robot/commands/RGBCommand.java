@@ -11,8 +11,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.RGBSubsystem;
 import frc.robot.subsystems.RGBSubsystem.RGBMessage;
-import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 import frc.robot.subsystems.VisionSubsystem;
 import java.util.Optional;
 
@@ -58,8 +58,8 @@ public class RGBCommand extends Command {
   public void execute() {
     // two note = yellow
 
-    if (shooterSubsystem.isBeamBreakSensorTriggered()
-        && intakeSubsystem.isBeamBreakSensorTriggered()
+    if (shooterSubsystem.isShooterBeamBreakSensorTriggered()
+        && shooterSubsystem.isSerializerBeamBreakSensorTriggered()
         && twoNoteMsg.isEmpty()) {
       twoNoteMsg =
           Optional.of(
@@ -67,15 +67,15 @@ public class RGBCommand extends Command {
                   Constants.Lights.Colors.YELLOW,
                   RGBSubsystem.PatternTypes.PULSE,
                   RGBSubsystem.MessagePriority.C_TWO_NOTE_WARNING));
-    } else if (!(shooterSubsystem.isBeamBreakSensorTriggered()
-        && intakeSubsystem.isBeamBreakSensorTriggered())) {
+    } else if (!(shooterSubsystem.isShooterBeamBreakSensorTriggered()
+        && shooterSubsystem.isSerializerBeamBreakSensorTriggered())) {
       twoNoteMsg.ifPresent(RGBMessage::expire);
       twoNoteMsg = Optional.empty();
     }
 
     // serializer = blue
-    if ((intakeSubsystem.isBeamBreakSensorTriggered()
-            || shooterSubsystem.isBeamBreakSensorTriggered())
+    if ((shooterSubsystem.isShooterBeamBreakSensorTriggered()
+            || shooterSubsystem.isSerializerBeamBreakSensorTriggered())
         && noteInRobotMsg.isEmpty()) {
       /*|| shooterSubsystem.isBeamBreakSensorTriggered()*/
       noteInRobotMsg =
@@ -84,8 +84,8 @@ public class RGBCommand extends Command {
                   Constants.Lights.Colors.WHITE,
                   RGBSubsystem.PatternTypes.STROBE,
                   RGBSubsystem.MessagePriority.F_NOTE_IN_ROBOT));
-    } else if (!(intakeSubsystem.isBeamBreakSensorTriggered()
-        || shooterSubsystem.isBeamBreakSensorTriggered())) {
+    } else if (!(shooterSubsystem.isShooterBeamBreakSensorTriggered()
+        || shooterSubsystem.isSerializerBeamBreakSensorTriggered())) {
       noteInRobotMsg.ifPresent(RGBMessage::expire);
       noteInRobotMsg = Optional.empty();
     }
@@ -102,25 +102,24 @@ public class RGBCommand extends Command {
                   Constants.Lights.Colors.RED,
                   RGBSubsystem.PatternTypes.STROBE,
                   RGBSubsystem.MessagePriority.D_READY_TO_SHOOT));
-    } else if (shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SPEAKER) || //if it shot the note, it is not ready to shoot 
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_AMP_BACK)||           //instead of relying on beam break sensor input
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_AMP_FORWARD)||
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SHUTTLE)||
-      shooterSubsystem.getMode().equals(ShooterMode.SHOOT_VAR)||
-      pivotSubsystem.isAtTargetDegrees()){
-        readyToShootMsg.ifPresent(RGBMessage::expire);
-        readyToShootMsg = Optional.empty();
+    } else if (shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SPEAKER)
+        || // if it shot the note, it is not ready to shoot instead of relying on beam break sensor
+        // input
+        shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SHUTTLE)
+        || shooterSubsystem.getMode().equals(ShooterMode.SHOOT_VAR)
+        || pivotSubsystem.isAtTargetDegrees()) {
+      readyToShootMsg.ifPresent(RGBMessage::expire);
+      readyToShootMsg = Optional.empty();
     }
   }
 
-  private boolean isReadyToShootInSun(){
-    if(shooterSubsystem.isReadyToShoot()){
-      sensorCounter +=1;
+  private boolean isReadyToShootInSun() {
+    if (shooterSubsystem.isReadyToShoot()) {
+      sensorCounter += 1;
     }
-    if (sensorCounter>=38){//waits 0.75 seconds to varify the note did not leave robot
+    if (sensorCounter >= 38) { // waits 0.75 seconds to varify the note did not leave robot
       return true;
-    }
-    else{
+    } else {
       sensorCounter = 0;
       return false;
     }

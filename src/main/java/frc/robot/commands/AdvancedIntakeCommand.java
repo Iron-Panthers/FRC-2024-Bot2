@@ -17,9 +17,7 @@ public class AdvancedIntakeCommand extends SequentialCommandGroup {
     addCommands(
         new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem),
         new ParallelCommandGroup(
-            new OuttakeCommand(intakeSubsystem)
-                .withTimeout(3)
-                .andThen(new StopIntakeCommand(intakeSubsystem)),
+            (new StopIntakeCommand(intakeSubsystem)),
             new ShooterRampUpCommand(shooterSubsystem, ShooterMode.RAMP_SPEAKER)));
   }
 }

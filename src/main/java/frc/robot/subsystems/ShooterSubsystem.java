@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Config;
+import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
 import java.util.Map;
 
@@ -22,8 +23,10 @@ public class ShooterSubsystem extends SubsystemBase {
   private final TalonFX rollerMotorBottom;
   private final TalonFX rollerMotorTop;
   private final TalonFX acceleratorMotor;
+  private final TalonFX serializerMotor;
 
-  private DigitalInput noteSensor;
+  private DigitalInput shooterSensor;
+  private DigitalInput serializerSensor;
 
   private ShooterMode shooterMode;
 
@@ -45,17 +48,17 @@ public class ShooterSubsystem extends SubsystemBase {
     INTAKE(Shooter.Modes.INTAKE),
     IDLE(Shooter.Modes.IDLE),
     RAMP_SPEAKER(Shooter.Modes.RAMP_SPEAKER),
-    RAMP_AMP_BACK(Shooter.Modes.RAMP_AMP_BACK),
-    RAMP_AMP_FRONT(Shooter.Modes.RAMP_AMP_FRONT),
     SHOOT_SPEAKER(Shooter.Modes.SHOOT_SPEAKER),
-    SHOOT_AMP_BACK(Shooter.Modes.SHOOT_AMP_BACK),
-    SHOOT_AMP_FORWARD(Shooter.Modes.SHOOT_AMP_FORWARD),
+    SHOOT_AMP(Shooter.Modes.SHOOT_AMP),
     MAINTAIN_VELOCITY(Shooter.Modes.MAINTAIN_VELOCITY),
     SHUTTLE(Shooter.Modes.SHUTTLE),
     SHOOT_SHUTTLE(Shooter.Modes.SHOOT_SHUTTLE),
     ACCEL_SECURE(Shooter.Modes.ACCEL_SECURE),
     VARIABLE_VELOCITY(Shooter.Modes.VARIABLE_VELOCITY),
-    SHOOT_VAR(Shooter.Modes.SHOOT_VAR);
+    SHOOT_VAR(Shooter.Modes.SHOOT_VAR),
+    LOAD_SHOOTER(Shooter.Modes.LOAD_SHOOTER),
+    SHOOTER_UNLOAD(Shooter.Modes.SHOOTER_UNLOAD),
+    RAMP_AMP(Shooter.Modes.RAMP_AMP);
 
     public final ShooterPowers shooterPowers;
 
@@ -64,11 +67,14 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
-  public record ShooterPowers(double roller, double topToBottomRatio, double accelerator) {
-    public ShooterPowers(double roller, double topToBottomRatio, double accelerator) {
+  public record ShooterPowers(
+      double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
+    public ShooterPowers(
+        double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
       this.roller = roller;
       this.topToBottomRatio = topToBottomRatio;
       this.accelerator = accelerator;
+      this.serializerSpeed = serializerSpeed;
     }
   }
 
@@ -76,8 +82,10 @@ public class ShooterSubsystem extends SubsystemBase {
     rollerMotorTop = new TalonFX(Shooter.Ports.TOP_SHOOTER_MOTOR_PORT);
     rollerMotorBottom = new TalonFX(Shooter.Ports.BOTTOM_SHOOTER_MOTOR_PORT);
     acceleratorMotor = new TalonFX(Shooter.Ports.ACCELERATOR_MOTOR_PORT);
+    serializerMotor = new TalonFX(Intake.Ports.SERIALIZER_MOTOR_PORT);
 
-    noteSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    // shooterSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    // serializerSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
 
     // rollerMotorTop.getConfigurator().apply(new TalonFXConfiguration());
     // rollerMotorBottom.getConfigurator().apply(new TalonFXConfiguration());
@@ -86,13 +94,16 @@ public class ShooterSubsystem extends SubsystemBase {
     rollerMotorTop.clearStickyFaults();
     acceleratorMotor.clearStickyFaults();
     rollerMotorBottom.clearStickyFaults();
+    serializerMotor.clearStickyFaults();
 
     rollerMotorBottom.setControl(new Follower(rollerMotorTop.getDeviceID(), false));
 
     acceleratorMotor.setInverted(true);
     rollerMotorBottom.setInverted(true);
     rollerMotorTop.setInverted(true);
+    serializerMotor.setInverted(true);
 
+    serializerMotor.setNeutralMode(NeutralModeValue.Brake);
     acceleratorMotor.setNeutralMode(NeutralModeValue.Brake);
     rollerMotorTop.setNeutralMode(NeutralModeValue.Coast);
     rollerMotorBottom.setNeutralMode(NeutralModeValue.Coast);
@@ -100,12 +111,14 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMode = ShooterMode.IDLE;
 
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
-      shooterTab.addBoolean("Sensor Input", this::isBeamBreakSensorTriggered);
+      shooterTab.addBoolean("Sensor Input", this::isShooterBeamBreakSensorTriggered);
       shooterTab
           .addDouble(
               "Top Roller Velocity (RPS)", () -> rollerMotorTop.getVelocity().getValueAsDouble())
           .withWidget(BuiltInWidgets.kGraph)
           .withSize(2, 1);
+      shooterTab.addDouble(
+          "Serializer motor voltage", () -> serializerMotor.getMotorVoltage().getValueAsDouble());
       shooterTab
           .addDouble(
               "Bottom Roller Velocity (RPS)",
@@ -150,12 +163,17 @@ public class ShooterSubsystem extends SubsystemBase {
         && rollerMotorTop.getVelocity().getValueAsDouble() >= Shooter.SHOOTER_VELOCITY_THRESHOLD;
   }
 
-  public boolean isBeamBreakSensorTriggered() {
-    return !noteSensor.get();
+  public boolean isShooterBeamBreakSensorTriggered() {
+    return true;
+  }
+
+  public boolean isSerializerBeamBreakSensorTriggered() {
+    // if is triggered return true
+    return true;
   }
 
   public boolean isReadyToShoot() {
-    return isBeamBreakSensorTriggered() && isShooterUpToSpeed();
+    return isShooterBeamBreakSensorTriggered() && isShooterUpToSpeed();
   }
 
   public void haltAccelerator() {
@@ -173,12 +191,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void advanceToShootMode() {
     switch (shooterMode) {
-      case RAMP_AMP_FRONT:
-        shooterMode = ShooterMode.SHOOT_AMP_FORWARD;
-        break;
-      case RAMP_AMP_BACK:
-        shooterMode = ShooterMode.SHOOT_AMP_BACK;
-        break;
+      case RAMP_AMP:
+        shooterMode = ShooterMode.SHOOT_AMP;
       case SHUTTLE:
         shooterMode = ShooterMode.SHOOT_SHUTTLE;
         break;
@@ -213,6 +227,7 @@ public class ShooterSubsystem extends SubsystemBase {
               shooterMode.shooterPowers.roller() * shooterMode.shooterPowers.topToBottomRatio()));
     }
 
-    acceleratorMotor.set(shooterMode.shooterPowers.accelerator());
+    acceleratorMotor.set(0);
+    serializerMotor.set(1);
   }
 }
