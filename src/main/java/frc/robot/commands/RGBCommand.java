@@ -114,7 +114,7 @@ public class RGBCommand extends Command {
   }
 
   private boolean isReadyToShootInSun() {
-    if (shooterSubsystem.isReadyToShoot()) {
+    if (shooterSubsystem.isReadyToShootSpeaker()) {
       sensorCounter += 1;
     }
     if (sensorCounter >= 38) { // waits 0.75 seconds to varify the note did not leave robot

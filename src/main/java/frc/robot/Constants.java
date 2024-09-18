@@ -260,7 +260,7 @@ public final class Constants {
 
     public static final class Modes {
       public static final ShooterSubsystem.ShooterPowers INTAKE =
-          new ShooterSubsystem.ShooterPowers(76, 1, 0, 0);
+          new ShooterSubsystem.ShooterPowers(0, 1, 0, 0.5);
       public static final ShooterSubsystem.ShooterPowers IDLE =
           new ShooterSubsystem.ShooterPowers(0, 0, 0, 0);
       public static final ShooterSubsystem.ShooterPowers RAMP_AMP =
@@ -269,13 +269,9 @@ public final class Constants {
           new ShooterSubsystem.ShooterPowers(76, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers SHOOT_SPEAKER =
           new ShooterSubsystem.ShooterPowers(76, 1, .5, 0);
-      public static final ShooterSubsystem.ShooterPowers TARGET_LOCK =
-          new ShooterSubsystem.ShooterPowers(0, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers SHOOT_AMP =
           new ShooterSubsystem.ShooterPowers(0, 0, 0, -1);
-      public static final ShooterSubsystem.ShooterPowers MAINTAIN_VELOCITY =
-          new ShooterSubsystem.ShooterPowers(40, 1, 0, 0);
-      public static final ShooterSubsystem.ShooterPowers SHUTTLE =
+      public static final ShooterSubsystem.ShooterPowers RAMP_SHUTTLE =
           new ShooterSubsystem.ShooterPowers(30, 1, 0, 0);
       public static final ShooterSubsystem.ShooterPowers SHOOT_SHUTTLE =
           new ShooterSubsystem.ShooterPowers(30, 1, 0.5, 0);
@@ -287,7 +283,7 @@ public final class Constants {
           new ShooterSubsystem.ShooterPowers(30, 1, 0.5, 0);
       public static final ShooterSubsystem.ShooterPowers LOAD_SHOOTER =
           new ShooterSubsystem.ShooterPowers(0, 0, 0.5, 0.5);
-      public static final ShooterSubsystem.ShooterPowers SHOOTER_UNLOAD =
+      public static final ShooterSubsystem.ShooterPowers UNLOAD_SHOOTER =
           new ShooterSubsystem.ShooterPowers(0, 0, -0.5, -0.5);
     }
 
