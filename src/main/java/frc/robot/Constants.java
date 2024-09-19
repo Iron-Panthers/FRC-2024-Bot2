@@ -578,6 +578,8 @@ public final class Constants {
     public static final double MAX_HEIGHT = 50;
     /** FIXME */
     public static final double ELEVATOR_FEEDFORWARD = 0.01;
+    /**FIXME */
+    public static final double AMP_HEIGHT = 20;
 
     public static final class Arm {
       /** FIXME */

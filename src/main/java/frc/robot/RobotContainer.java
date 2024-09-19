@@ -33,6 +33,7 @@ import frc.robot.Constants.Drive.Setpoints;
 import frc.robot.autonomous.HeadingAngle;
 import frc.robot.autonomous.HeadingTargetLock;
 import frc.robot.commands.AccelNoteCommand;
+import frc.robot.commands.AmpPreparationCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.ElevatorHeightCommand;
@@ -40,6 +41,7 @@ import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LoadShooterCommand;
 import frc.robot.commands.OuttakeCommand;
+import frc.robot.commands.PivotAndElevatorTransferPositionsCommand;
 import frc.robot.commands.PivotAngleCommand;
 import frc.robot.commands.PivotManualCommand;
 import frc.robot.commands.PivotTargetLockCommand;
@@ -51,6 +53,7 @@ import frc.robot.commands.ShootCommand;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.commands.StopShooterCommand;
 import frc.robot.commands.TargetLockCommand;
+import frc.robot.commands.UnloadShooterCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -338,14 +341,18 @@ public class RobotContainer {
     anthony
         .leftBumper()
         .onTrue(
-            new IntakeCommand(
-                intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem));
+            new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
+            .andThen(
+                new IntakeCommand(
+                    intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     jacob
         .leftBumper()
         .onTrue(
-            new IntakeCommand(
-                intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem));
+            new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
+            .andThen(
+                new IntakeCommand(
+                    intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // SHOOT
     anthony
@@ -412,10 +419,22 @@ public class RobotContainer {
                         intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // NOTE TO SHOOTER OR SERIALIZER
-    anthony.b().onTrue(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
+    anthony.b().onTrue(
+            new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
+        .andThen(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
-    jacob.b().onTrue(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
-    jacob.a().onTrue(new ShootCommand(shooterSubsystem));
+    jacob.b().onTrue(
+        new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
+        .andThen(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
+    jacob.a().onTrue(
+        new RotateAngleDriveCommand(
+                drivebaseSubsystem,
+                translationXSupplier,
+                translationYSupplier,
+                DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50)
+            .alongWith(
+                new AmpPreparationCommand(
+                    pivotSubsystem, elevatorSubsystem, shooterSubsystem)));
 
     // SPEAKER FROM SUBWOOFER
     anthony
@@ -434,8 +453,8 @@ public class RobotContainer {
                     translationYSupplier,
                     DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50)
                 .alongWith(
-                    new ElevatorHeightCommand(
-                        elevatorSubsystem, 20))); // height should be set to a constant
+                    new AmpPreparationCommand(
+                        pivotSubsystem, elevatorSubsystem, shooterSubsystem))); 
 
     DoubleSupplier rotation =
         exponential(
