@@ -443,6 +443,27 @@ public class RobotContainer {
                 .alongWith(
                     new AmpPreparationCommand(
                         pivotSubsystem, elevatorSubsystem, shooterSubsystem, intakeSubsystem)));
+    
+    //PIVOT SETPOINTS
+    anthony
+        .povUp().onTrue(
+            new PivotAngleCommand(pivotSubsystem, 30));
+
+    anthony
+        .povLeft().onTrue(
+            new PivotAngleCommand(pivotSubsystem, 60));
+
+    anthony
+        .povRight().onTrue(
+            new PivotAngleCommand(pivotSubsystem, 75));
+
+    anthony
+        .povDown().onTrue(
+            new PivotAngleCommand(pivotSubsystem, 55));
+    
+    //TRAP CLIMB STUFF
+    // jacob.
+    //     povCenter().onTrue();
 
     DoubleSupplier rotation =
         exponential(
