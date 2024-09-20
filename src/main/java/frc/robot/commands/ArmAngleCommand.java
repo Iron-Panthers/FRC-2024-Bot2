@@ -46,6 +46,6 @@ public class ArmAngleCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.nearTargetAngle();
+    return elevatorSubsystem.atTargetAngle();
   }
 }

@@ -13,12 +13,6 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ElevatorHeightCommand extends Command {
 
   ElevatorSubsystem elevatorSubsystem;
-
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
   double height;
 
   public ElevatorHeightCommand(ElevatorSubsystem elevatorSubsystem, double height) {
@@ -30,14 +24,13 @@ public class ElevatorHeightCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    elevatorSubsystem.setTargetHeight(height);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-    elevatorSubsystem.setTargetHeight(height);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -46,6 +39,6 @@ public class ElevatorHeightCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.nearTargetHeight();
+    return elevatorSubsystem.atTargetHeight();
   }
 }

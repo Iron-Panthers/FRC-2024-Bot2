@@ -16,13 +16,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private TalonFX armMotor;
   private TalonFX elevatorMotor;
-  private PIDController controller;
+  private PIDController elevatorController;
+  private PIDController armController;
   private double targetHeight;
   private double targetAngle;
   private double elevatorMotorPower;
   private double armMotorPower;
   private double currentHeight;
   private double currentAngle;
+
   private final ShuffleboardTab ElevatorTab = Shuffleboard.getTab("Elevator");
 
   /** Creates a new ElevatorSubsystem. */
@@ -36,13 +38,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorMotor.setPosition(0);
     armMotor.setPosition(0);
 
-    controller = new PIDController(0.4, 0, 0.0125);
+    // FIXME placeholder values
+    elevatorController = new PIDController(0.4, 0, 0.0125);
+    armController = new PIDController(0.2, 0, 0);
 
     ElevatorTab.addNumber("Target Height", () -> this.targetHeight);
     ElevatorTab.addNumber("Target Angle", () -> this.targetAngle);
-    // ElevatorTab.addNumber("PID output", () -> this.controller);
     ElevatorTab.addNumber("Current Height", () -> this.currentHeight);
-    ElevatorTab.add(controller);
+    ElevatorTab.add(elevatorController);
+    ElevatorTab.add(armController);
 
     targetHeight = 0;
     currentHeight = 0;
@@ -82,14 +86,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.targetAngle = MathUtil.clamp(targetAngle, Elevator.Arm.MAX_ANGLE, 0);
   }
 
-  public boolean nearTargetAngle() {
+  public boolean atTargetAngle() {
+    // replace with epsilon equals
     if (targetAngle - 0.5 <= getArmPosition() && getArmPosition() <= targetAngle + 0.5) {
       return true;
     }
     return false;
   }
 
-  public boolean nearTargetHeight() {
+  public boolean atTargetHeight() {
     if (targetHeight - 0.5 <= getElevatorPosition()
         && getElevatorPosition() <= targetHeight + 0.5) {
       return true;
@@ -97,17 +102,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     return false;
   }
 
-  public double calculateFeedforward() {
+  public double calculateArmFeedforward() {
     return 0; // FIXME
+    // using a constant force spring
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    elevatorMotorPower = controller.calculate(getElevatorPosition(), targetHeight);
-    armMotorPower = controller.calculate(getArmPosition(), targetAngle);
+    elevatorMotorPower = elevatorController.calculate(getElevatorPosition(), targetHeight);
+    armMotorPower = armController.calculate(getArmPosition(), targetAngle);
     elevatorMotor.setVoltage(
         MathUtil.clamp(elevatorMotorPower + Elevator.ELEVATOR_FEEDFORWARD, -10, 10));
-    armMotor.setVoltage(MathUtil.clamp(armMotorPower + calculateFeedforward(), -10, 10));
+    armMotor.setVoltage(MathUtil.clamp(armMotorPower + calculateArmFeedforward(), -10, 10));
   }
 }

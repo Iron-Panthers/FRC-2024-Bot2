@@ -36,7 +36,6 @@ import frc.robot.commands.AccelNoteCommand;
 import frc.robot.commands.AmpPreparationCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
-import frc.robot.commands.ElevatorHeightCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LoadShooterCommand;
@@ -52,8 +51,7 @@ import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.commands.StopShooterCommand;
-import frc.robot.commands.TargetLockCommand;
-import frc.robot.commands.UnloadShooterCommand;
+import frc.robot.commands.DrivebaseTargetLockCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -149,7 +147,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "AutoPivotAngle", new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem));
     NamedCommands.registerCommand(
-        "AutoDrivebaseAngle", new TargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0));
+        "AutoDrivebaseAngle", new DrivebaseTargetLockCommand(drivebaseSubsystem, () -> 0, () -> 0));
     NamedCommands.registerCommand("AccelNote", new AccelNoteCommand(shooterSubsystem));
     NamedCommands.registerCommand(
         "ZeroOrigin", new InstantCommand(() -> drivebaseSubsystem.zeroGyroscope()));
@@ -229,7 +227,7 @@ public class RobotContainer {
             translationXSupplier,
             translationYSupplier,
             // anthony.rightBumper(),
-            anthony.leftBumper()));
+            ()-> false));
 
     rgbSubsystem.setDefaultCommand(
         new RGBCommand(
@@ -262,7 +260,7 @@ public class RobotContainer {
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
       driverView.addDouble("Shoot Var Velocity", () -> shooterSubsystem.variableVelocity);
       driverView.addString("ShooterMode", () -> shooterSubsystem.getMode().toString());
-      driverView.addDouble("Pivot Angle Error", () -> pivotSubsystem.getAngularError());
+      driverView.addDouble("Pivot Angle Error", () -> pivotSubsystem.getCurrentError());
       driverView.addDouble("Drivebase Angle Error", () -> drivebaseSubsystem.getAngularError());
     }
 
@@ -342,17 +340,17 @@ public class RobotContainer {
         .leftBumper()
         .onTrue(
             new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
-            .andThen(
-                new IntakeCommand(
-                    intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
+                .andThen(
+                    new IntakeCommand(
+                        intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     jacob
         .leftBumper()
         .onTrue(
             new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
-            .andThen(
-                new IntakeCommand(
-                    intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
+                .andThen(
+                    new IntakeCommand(
+                        intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // SHOOT
     anthony
@@ -365,6 +363,8 @@ public class RobotContainer {
                         intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // SHOOT OVERRIDE
+    
+    // FIXME should be right trigger is move elevator up, left trigger is move elevator down
     jacob
         .rightTrigger()
         .onTrue(new AccelNoteCommand(shooterSubsystem).andThen(new ShootCommand(shooterSubsystem)));
@@ -374,29 +374,8 @@ public class RobotContainer {
     jacob
         .y()
         .whileTrue(
-            new TargetLockCommand(drivebaseSubsystem, translationXSupplier, translationYSupplier)
+            new DrivebaseTargetLockCommand(drivebaseSubsystem, translationXSupplier, translationYSupplier)
                 .alongWith(new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem)));
-
-    // jacob
-    //         .a()
-    //         .onTrue(
-    //                 new RotateAngleDriveCommand(
-    //                         drivebaseSubsystem,
-    //                         translationXSupplier,
-    //                         translationYSupplier,
-    //                         DriverStation.getAlliance().get().equals(Alliance.Red) ? -40 : 40)
-    //                         .alongWith(new PivotAngleCommand(pivotSubsystem, 60))
-    //                         .alongWith(new ShooterRampUpCommand(shooterSubsystem,
-    // ShooterMode.SHUTTLE)));
-
-    // anthony.y().whileTrue(new TargetLockCommand(drivebaseSubsystem,
-    // translationXSupplier,
-    // translationYSupplier, Setpoints.SPEAKER));
-
-    // DoubleSupplier variableVelocityRate = () -> modifyAxis(-jacob.getRightY());
-
-    // new Trigger(() -> Math.abs(variableVelocityRate.getAsDouble()) > 0.07)
-    // .onTrue(new VariableShooterCommand(shooterSubsystem, variableVelocityRate));
 
     DoubleSupplier pivotManualRate = () -> modifyAxis(-jacob.getLeftY());
 
@@ -421,22 +400,30 @@ public class RobotContainer {
                             intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem))));
 
     // NOTE TO SHOOTER OR SERIALIZER
-    anthony.b().onTrue(
+    anthony
+        .b()
+        .onTrue(
             new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
-        .andThen(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
+                .andThen(
+                    new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
-    jacob.b().onTrue(
-        new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
-        .andThen(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
-    jacob.a().onTrue(
-        new RotateAngleDriveCommand(
-                drivebaseSubsystem,
-                translationXSupplier,
-                translationYSupplier,
-                DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50)
-            .alongWith(
-                new AmpPreparationCommand(
-                    pivotSubsystem, elevatorSubsystem, shooterSubsystem)));
+    jacob
+        .b()
+        .onTrue(
+            new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
+                .andThen(
+                    new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
+    jacob
+        .a()
+        .onTrue(
+            new RotateAngleDriveCommand(
+                    drivebaseSubsystem,
+                    translationXSupplier,
+                    translationYSupplier,
+                    DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50) // FIXME confirm angles
+                .alongWith(
+                    new AmpPreparationCommand(
+                        pivotSubsystem, elevatorSubsystem, shooterSubsystem)));
 
     // SPEAKER FROM SUBWOOFER
     anthony
@@ -453,10 +440,10 @@ public class RobotContainer {
                     drivebaseSubsystem,
                     translationXSupplier,
                     translationYSupplier,
-                    DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50)
+                    DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50) // FIXME confirm angles
                 .alongWith(
                     new AmpPreparationCommand(
-                        pivotSubsystem, elevatorSubsystem, shooterSubsystem))); 
+                        pivotSubsystem, elevatorSubsystem, shooterSubsystem)));
 
     DoubleSupplier rotation =
         exponential(
@@ -475,7 +462,7 @@ public class RobotContainer {
                 translationXSupplier,
                 translationYSupplier,
                 rotationVelocity,
-                anthony.rightBumper()));
+                () -> false));
 
     new Trigger(
             () ->
@@ -488,7 +475,7 @@ public class RobotContainer {
                 translationYSupplier,
                 anthony::getRightY,
                 anthony::getRightX,
-                anthony.rightBumper()));
+                () -> false));
   }
 
   /**

@@ -13,19 +13,17 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class AmpPreparationCommand extends SequentialCommandGroup {
   /** Creates a new AmpPreparationCommand. */
   public AmpPreparationCommand(
-    PivotSubsystem pivotSubsystem,
-    ElevatorSubsystem elevatorSubsystem,
-    ShooterSubsystem shooterSubsystem) {
-    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered()){
+      PivotSubsystem pivotSubsystem,
+      ElevatorSubsystem elevatorSubsystem,
+      ShooterSubsystem shooterSubsystem) {
+    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered()) {
       addCommands(new ElevatorHeightCommand(elevatorSubsystem, Elevator.AMP_HEIGHT));
-    }
-    else{
-      addCommands( 
+    } else {
+      addCommands(
           new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
-        .andThen(
-          new UnloadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem))
-        .andThen(
-          new ElevatorHeightCommand(elevatorSubsystem, Elevator.AMP_HEIGHT)));
+              .andThen(
+                  new UnloadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem))
+              .andThen(new ElevatorHeightCommand(elevatorSubsystem, Elevator.AMP_HEIGHT)));
     }
   }
 }

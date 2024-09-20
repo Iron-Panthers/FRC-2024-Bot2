@@ -36,11 +36,9 @@ public class PivotSubsystem extends SubsystemBase {
   private double pidVoltageOutput;
   private double calculatedTargetDegrees;
 
-  private boolean inRange;
   private Pose2d pose;
-  private double distance;
+  private double distanceFromSpeaker;
   private GenericEntry debugTarget;
-  private double power;
 
   private double pastDebugTarget = 0;
   private boolean listenToDebug = true;
@@ -71,15 +69,14 @@ public class PivotSubsystem extends SubsystemBase {
       pivotTab.addNumber(
           "Current Motor Position", () -> pivotMotor.getPosition().getValueAsDouble());
       pivotTab.addNumber("Current Pivot Angle", this::getCurrentAngle);
-      pivotTab.addBoolean("Is at target", this::isAtTargetDegrees);
+      pivotTab.addBoolean("Is at target", this::atTargetDegrees);
       pivotTab.addNumber("Motor Error", this::getCurrentError);
       pivotTab.addNumber("PID Error", pidController::getPositionError);
       pivotTab.addNumber("Target Degrees", this::getTargetDegrees);
       pivotTab.addNumber("Applied Voltage", () -> pivotMotor.getMotorVoltage().getValueAsDouble());
       pivotTab.addDouble("PID Voltage Output", () -> pidVoltageOutput);
       pivotTab.addDouble("Calculated Target Angle", () -> calculatedTargetDegrees);
-      pivotTab.addDouble("Power", () -> power);
-      pivotTab.addDouble("Distance", () -> distance);
+      pivotTab.addDouble("Distance", () -> distanceFromSpeaker);
       pivotTab.add(pidController);
       debugTarget =
           pivotTab
@@ -106,12 +103,8 @@ public class PivotSubsystem extends SubsystemBase {
     return targetDegrees;
   }
 
-  public boolean isAtTargetDegrees() {
+  public boolean atTargetDegrees() {
     return Util.epsilonEquals(getCurrentAngle(), targetDegrees, Pivot.EPSILON);
-  }
-
-  public boolean isReadyToShoot() {
-    return isAtTargetDegrees() && inRange;
   }
 
   public void setTargetDegrees(double degrees) {
@@ -138,31 +131,24 @@ public class PivotSubsystem extends SubsystemBase {
       speakerX = Pivot.BLUE_SPEAKER_POSE.getX();
       speakerY = Pivot.BLUE_SPEAKER_POSE.getY();
     }
-    distance =
+    distanceFromSpeaker =
         (Math.sqrt(Math.pow((x - speakerX), 2) + Math.pow((y - speakerY), 2)))
             - Pivot.CENTER_OF_ROBOT_TO_BUMPER;
     targetDegrees =
-        -0.006073 * Math.pow(distance, 6)
-            + 0.167509 * Math.pow(distance, 5)
-            - 1.803043 * Math.pow(distance, 4)
-            + 9.309355 * Math.pow(distance, 3)
-            - 21.517994 * Math.pow(distance, 2)
-            + 6.8762 * distance
+        -0.006073 * Math.pow(distanceFromSpeaker, 6)
+            + 0.167509 * Math.pow(distanceFromSpeaker, 5)
+            - 1.803043 * Math.pow(distanceFromSpeaker, 4)
+            + 9.309355 * Math.pow(distanceFromSpeaker, 3)
+            - 21.517994 * Math.pow(distanceFromSpeaker, 2)
+            + 6.8762 * distanceFromSpeaker
             + 64.78029
             - 2.7;
-  }
-
-  public double getAngularError() {
-    return targetDegrees - getCurrentAngle();
-  }
-
-  public void setPower(double power) {
-    this.power = power;
   }
 
   @Override
   public void periodic() {
 
+    /* debugging stuff */
     double currentTarget = debugTarget.getDouble(23.5);
 
     if (currentTarget != pastDebugTarget) {

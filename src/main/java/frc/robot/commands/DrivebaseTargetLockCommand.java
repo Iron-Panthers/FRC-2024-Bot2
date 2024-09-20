@@ -17,7 +17,7 @@ import java.util.function.DoubleSupplier;
  * This command takes a drive angle and a target x,y coordinate, and snaps the robot to face the
  * target. This is useful to lock the robot to fixed target with a button.
  */
-public class TargetLockCommand extends Command {
+public class DrivebaseTargetLockCommand extends Command {
   private final DrivebaseSubsystem drivebaseSubsystem;
 
   private final DoubleSupplier translationXSupplier;
@@ -28,7 +28,7 @@ public class TargetLockCommand extends Command {
   private double targetAngle;
 
   /** Creates a new TargetLockCommand. */
-  public TargetLockCommand(
+  public DrivebaseTargetLockCommand(
       DrivebaseSubsystem drivebaseSubsystem,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier) {

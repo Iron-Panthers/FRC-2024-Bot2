@@ -92,7 +92,7 @@ public class RGBCommand extends Command {
 
     // ready to shoot = red
     if (isReadyToShootInSun()
-        && pivotSubsystem.isAtTargetDegrees()
+        && pivotSubsystem.atTargetDegrees()
         && Math.abs(drivebaseSubsystem.getAngularError()) < 2
         && readyToShootMsg.isEmpty()
         && visionSubsystem.getCanSeeSpeakerTags()) {
@@ -107,7 +107,7 @@ public class RGBCommand extends Command {
         // input
         shooterSubsystem.getMode().equals(ShooterMode.SHOOT_SHUTTLE)
         || shooterSubsystem.getMode().equals(ShooterMode.SHOOT_VAR)
-        || pivotSubsystem.isAtTargetDegrees()) {
+        || pivotSubsystem.atTargetDegrees()) {
       readyToShootMsg.ifPresent(RGBMessage::expire);
       readyToShootMsg = Optional.empty();
     }

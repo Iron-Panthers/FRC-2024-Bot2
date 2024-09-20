@@ -19,6 +19,8 @@ public class LoadShooterCommand extends Command {
   ElevatorSubsystem elevatorSubsystem;
   PivotSubsystem pivotSubsystem;
 
+  /** Use PivotAndElevatorTransferCommand before running */
+
   public LoadShooterCommand(
       ShooterSubsystem shooterSubsystem,
       PivotSubsystem pivotSubsystem,
@@ -32,14 +34,17 @@ public class LoadShooterCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterSubsystem.setShooterMode(ShooterMode.LOAD_SHOOTER);
     elevatorSubsystem.setTargetHeight(0);
     pivotSubsystem.setTargetDegrees(20);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (elevatorSubsystem.atTargetHeight() && pivotSubsystem.atTargetDegrees()) {
+      shooterSubsystem.setShooterMode(ShooterMode.LOAD_SHOOTER);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
