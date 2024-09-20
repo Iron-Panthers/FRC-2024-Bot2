@@ -32,16 +32,18 @@ public class UnloadShooterCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pass = shooterSubsystem.isSerializerBeamBreakSensorTriggered();
-    shooterSubsystem.setShooterMode(ShooterMode.SHOOTER_UNLOAD);
     pivotSubsystem.setTargetDegrees(20);
     elevatorSubsystem.setTargetHeight(0);
+    pass = shooterSubsystem.isSerializerBeamBreakSensorTriggered();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered() && pass == false) {
+    if (elevatorSubsystem.atTargetHeight() && pivotSubsystem.atTargetDegrees()) {
+      shooterSubsystem.setShooterMode(ShooterMode.SHOOTER_UNLOAD);
+    }
+      if (shooterSubsystem.isSerializerBeamBreakSensorTriggered() && pass == false) {
       pass = true;
     }
   }

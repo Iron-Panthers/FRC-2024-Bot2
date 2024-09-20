@@ -37,15 +37,17 @@ public class IntakeCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pivotSubsystem.setTargetDegrees(20);
-    intakeSubsystem.setIntakeMode(IntakeMode.INTAKE);
-    shooterSubsystem.setShooterMode(ShooterMode.INTAKE);
     elevatorSubsystem.setTargetHeight(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(elevatorSubsystem.atTargetHeight()){
+      intakeSubsystem.setIntakeMode(IntakeMode.INTAKE);
+      shooterSubsystem.setShooterMode(ShooterMode.INTAKE);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
