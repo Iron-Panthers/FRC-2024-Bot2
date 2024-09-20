@@ -415,8 +415,10 @@ public class RobotContainer {
                         ? -Setpoints.SOURCE_DEGREES
                         : Setpoints.SOURCE_DEGREES)
                 .alongWith(
-                    new IntakeCommand(
-                        intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
+                    new PivotAndElevatorTransferPositionsCommand(pivotSubsystem, elevatorSubsystem)
+                    .andThen(
+                        new IntakeCommand(
+                            intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem))));
 
     // NOTE TO SHOOTER OR SERIALIZER
     anthony.b().onTrue(
