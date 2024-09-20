@@ -39,6 +39,7 @@ import frc.robot.commands.DefenseModeCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LoadShooterCommand;
+import frc.robot.commands.ManualElevatorCommand;
 import frc.robot.commands.OuttakeCommand;
 import frc.robot.commands.PivotAngleCommand;
 import frc.robot.commands.PivotManualCommand;
@@ -376,6 +377,15 @@ public class RobotContainer {
 
     new Trigger(() -> pivotManualRate.getAsDouble() > 0.07)
         .onTrue(new PivotManualCommand(pivotSubsystem, pivotManualRate));
+    
+    DoubleSupplier elevatorDownSupplier = () -> modifyAxis(-jacob.getLeftTriggerAxis());
+    DoubleSupplier elevatorUpSupplier = () -> modifyAxis(jacob.getLeftTriggerAxis());
+
+    new Trigger(() -> elevatorDownSupplier.getAsDouble()<-0.07)
+        .onTrue(new ManualElevatorCommand(elevatorDownSupplier, elevatorSubsystem));
+
+    new Trigger(() -> elevatorUpSupplier.getAsDouble()>0.07)
+        .onTrue(new ManualElevatorCommand(elevatorUpSupplier, elevatorSubsystem));
 
     // SOURCE
     anthony
