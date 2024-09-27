@@ -15,15 +15,18 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Config;
+import frc.robot.Constants.Intake;
 import frc.robot.Constants.Shooter;
 import java.util.Map;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private final TalonFX rollerMotorBottom;
-  private final TalonFX rollerMotorTop;
-  private final TalonFX acceleratorMotor;
+  private final TalonFX pivotShooterTopMotor; // pivotShooterTop
+  private final TalonFX pivotShooterBottomMotor; // pivotShooterBottom
+  private final TalonFX pivotAcceleratorMotor; // pivotAccelerator
+  private final TalonFX serializerMotor; // ampShooter
 
-  private DigitalInput noteSensor;
+  private DigitalInput shooterSensor;
+  private DigitalInput serializerSensor;
 
   private ShooterMode shooterMode;
 
@@ -45,17 +48,16 @@ public class ShooterSubsystem extends SubsystemBase {
     INTAKE(Shooter.Modes.INTAKE),
     IDLE(Shooter.Modes.IDLE),
     RAMP_SPEAKER(Shooter.Modes.RAMP_SPEAKER),
-    RAMP_AMP_BACK(Shooter.Modes.RAMP_AMP_BACK),
-    RAMP_AMP_FRONT(Shooter.Modes.RAMP_AMP_FRONT),
     SHOOT_SPEAKER(Shooter.Modes.SHOOT_SPEAKER),
-    SHOOT_AMP_BACK(Shooter.Modes.SHOOT_AMP_BACK),
-    SHOOT_AMP_FORWARD(Shooter.Modes.SHOOT_AMP_FORWARD),
-    MAINTAIN_VELOCITY(Shooter.Modes.MAINTAIN_VELOCITY),
-    SHUTTLE(Shooter.Modes.SHUTTLE),
+    SHOOT_AMP(Shooter.Modes.SHOOT_AMP),
+    SHUTTLE(Shooter.Modes.RAMP_SHUTTLE),
     SHOOT_SHUTTLE(Shooter.Modes.SHOOT_SHUTTLE),
     ACCEL_SECURE(Shooter.Modes.ACCEL_SECURE),
     VARIABLE_VELOCITY(Shooter.Modes.VARIABLE_VELOCITY),
-    SHOOT_VAR(Shooter.Modes.SHOOT_VAR);
+    SHOOT_VAR(Shooter.Modes.SHOOT_VAR),
+    LOAD_SHOOTER(Shooter.Modes.LOAD_SHOOTER),
+    SHOOTER_UNLOAD(Shooter.Modes.UNLOAD_SHOOTER),
+    RAMP_AMP(Shooter.Modes.RAMP_AMP);
 
     public final ShooterPowers shooterPowers;
 
@@ -64,58 +66,65 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
-  public record ShooterPowers(double roller, double topToBottomRatio, double accelerator) {
-    public ShooterPowers(double roller, double topToBottomRatio, double accelerator) {
+  public record ShooterPowers(
+      double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
+    public ShooterPowers(
+        double roller, double topToBottomRatio, double accelerator, double serializerSpeed) {
       this.roller = roller;
       this.topToBottomRatio = topToBottomRatio;
       this.accelerator = accelerator;
+      this.serializerSpeed = serializerSpeed;
     }
   }
 
   public ShooterSubsystem() {
-    rollerMotorTop = new TalonFX(Shooter.Ports.TOP_SHOOTER_MOTOR_PORT);
-    rollerMotorBottom = new TalonFX(Shooter.Ports.BOTTOM_SHOOTER_MOTOR_PORT);
-    acceleratorMotor = new TalonFX(Shooter.Ports.ACCELERATOR_MOTOR_PORT);
+    pivotShooterBottomMotor = new TalonFX(Shooter.Ports.TOP_SHOOTER_MOTOR_PORT);
+    pivotShooterTopMotor = new TalonFX(Shooter.Ports.BOTTOM_SHOOTER_MOTOR_PORT);
+    pivotAcceleratorMotor = new TalonFX(Shooter.Ports.ACCELERATOR_MOTOR_PORT);
+    serializerMotor = new TalonFX(Intake.Ports.SERIALIZER_MOTOR_PORT);
 
-    noteSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    shooterSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    serializerSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
 
-    // rollerMotorTop.getConfigurator().apply(new TalonFXConfiguration());
-    // rollerMotorBottom.getConfigurator().apply(new TalonFXConfiguration());
-    // acceleratorMotor.getConfigurator().apply(new TalonFXConfiguration());
+    pivotShooterBottomMotor.clearStickyFaults();
+    pivotAcceleratorMotor.clearStickyFaults();
+    pivotShooterTopMotor.clearStickyFaults();
+    serializerMotor.clearStickyFaults();
 
-    rollerMotorTop.clearStickyFaults();
-    acceleratorMotor.clearStickyFaults();
-    rollerMotorBottom.clearStickyFaults();
+    pivotShooterTopMotor.setControl(new Follower(pivotShooterBottomMotor.getDeviceID(), false));
 
-    rollerMotorBottom.setControl(new Follower(rollerMotorTop.getDeviceID(), false));
+    pivotAcceleratorMotor.setInverted(true);
+    pivotShooterTopMotor.setInverted(true);
+    pivotShooterBottomMotor.setInverted(true);
+    serializerMotor.setInverted(true);
 
-    acceleratorMotor.setInverted(true);
-    rollerMotorBottom.setInverted(true);
-    rollerMotorTop.setInverted(true);
-
-    acceleratorMotor.setNeutralMode(NeutralModeValue.Brake);
-    rollerMotorTop.setNeutralMode(NeutralModeValue.Coast);
-    rollerMotorBottom.setNeutralMode(NeutralModeValue.Coast);
+    serializerMotor.setNeutralMode(NeutralModeValue.Brake);
+    pivotAcceleratorMotor.setNeutralMode(NeutralModeValue.Brake);
+    pivotShooterBottomMotor.setNeutralMode(NeutralModeValue.Coast);
+    pivotShooterTopMotor.setNeutralMode(NeutralModeValue.Coast);
 
     shooterMode = ShooterMode.IDLE;
 
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
-      shooterTab.addBoolean("Sensor Input", this::isBeamBreakSensorTriggered);
+      shooterTab.addBoolean("Sensor Input", this::isShooterBeamBreakSensorTriggered);
       shooterTab
           .addDouble(
-              "Top Roller Velocity (RPS)", () -> rollerMotorTop.getVelocity().getValueAsDouble())
+              "Top Roller Velocity (RPS)",
+              () -> pivotShooterBottomMotor.getVelocity().getValueAsDouble())
           .withWidget(BuiltInWidgets.kGraph)
           .withSize(2, 1);
+      shooterTab.addDouble(
+          "Serializer motor voltage", () -> serializerMotor.getMotorVoltage().getValueAsDouble());
       shooterTab
           .addDouble(
               "Bottom Roller Velocity (RPS)",
-              () -> rollerMotorBottom.getVelocity().getValueAsDouble())
+              () -> pivotShooterTopMotor.getVelocity().getValueAsDouble())
           .withWidget(BuiltInWidgets.kGraph)
           .withSize(2, 1);
       shooterTab.addDouble(
-          "Top roller amps", () -> rollerMotorTop.getSupplyCurrent().getValueAsDouble());
+          "Top roller amps", () -> pivotShooterBottomMotor.getSupplyCurrent().getValueAsDouble());
       shooterTab.addDouble(
-          "Bottom roller amps", () -> rollerMotorBottom.getSupplyCurrent().getValueAsDouble());
+          "Bottom roller amps", () -> pivotShooterTopMotor.getSupplyCurrent().getValueAsDouble());
       shooterTab.addString("mode", () -> shooterMode.toString());
 
       ampRollerRatioEntry =
@@ -146,20 +155,23 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isShooterUpToSpeed() {
-    return rollerMotorBottom.getVelocity().getValueAsDouble() >= Shooter.SHOOTER_VELOCITY_THRESHOLD
-        && rollerMotorTop.getVelocity().getValueAsDouble() >= Shooter.SHOOTER_VELOCITY_THRESHOLD;
+    return pivotShooterTopMotor.getVelocity().getValueAsDouble()
+            >= Shooter.SHOOTER_VELOCITY_THRESHOLD
+        && pivotShooterBottomMotor.getVelocity().getValueAsDouble()
+            >= Shooter.SHOOTER_VELOCITY_THRESHOLD;
   }
 
-  public boolean isBeamBreakSensorTriggered() {
-    return !noteSensor.get();
+  public boolean isShooterBeamBreakSensorTriggered() {
+    return shooterSensor.get();
   }
 
-  public boolean isReadyToShoot() {
-    return isBeamBreakSensorTriggered() && isShooterUpToSpeed();
+  public boolean isSerializerBeamBreakSensorTriggered() {
+    // if is triggered return true
+    return serializerSensor.get();
   }
 
-  public void haltAccelerator() {
-    acceleratorMotor.set(0);
+  public boolean isReadyToShootSpeaker() {
+    return isShooterBeamBreakSensorTriggered() && isShooterUpToSpeed();
   }
 
   public void setShooterMode(ShooterMode shooterMode) {
@@ -173,12 +185,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void advanceToShootMode() {
     switch (shooterMode) {
-      case RAMP_AMP_FRONT:
-        shooterMode = ShooterMode.SHOOT_AMP_FORWARD;
-        break;
-      case RAMP_AMP_BACK:
-        shooterMode = ShooterMode.SHOOT_AMP_BACK;
-        break;
+      case RAMP_AMP:
+        shooterMode = ShooterMode.SHOOT_AMP;
       case SHUTTLE:
         shooterMode = ShooterMode.SHOOT_SHUTTLE;
         break;
@@ -197,22 +205,22 @@ public class ShooterSubsystem extends SubsystemBase {
       // In debug use all of the debug values for our mode
       d_topToBottomRatio = ampRollerRatioEntry.getDouble(1);
       d_ShooterSpeed = shooterSpeedEntry.getDouble(0);
-      rollerMotorBottom.setControl(velocityVoltageRequest.withVelocity(d_ShooterSpeed));
-      rollerMotorTop.setControl(
+      pivotShooterTopMotor.setControl(velocityVoltageRequest.withVelocity(d_ShooterSpeed));
+      pivotShooterBottomMotor.setControl(
           velocityVoltageRequest.withVelocity(d_ShooterSpeed * d_topToBottomRatio));
     } else if (shooterMode == ShooterMode.VARIABLE_VELOCITY
         || shooterMode == ShooterMode.SHOOT_VAR) {
-      rollerMotorBottom.setControl(velocityVoltageRequest.withVelocity(variableVelocity));
-      rollerMotorTop.setControl(velocityVoltageRequest.withVelocity(variableVelocity));
+      pivotShooterTopMotor.setControl(velocityVoltageRequest.withVelocity(variableVelocity));
+      pivotShooterBottomMotor.setControl(velocityVoltageRequest.withVelocity(variableVelocity));
     } else {
       // Otherwise just use our current mode for the values
-      rollerMotorBottom.setControl(
+      pivotShooterTopMotor.setControl(
           velocityVoltageRequest.withVelocity(shooterMode.shooterPowers.roller()));
-      rollerMotorTop.setControl(
+      pivotShooterBottomMotor.setControl(
           velocityVoltageRequest.withVelocity(
               shooterMode.shooterPowers.roller() * shooterMode.shooterPowers.topToBottomRatio()));
     }
-
-    acceleratorMotor.set(shooterMode.shooterPowers.accelerator());
+    pivotAcceleratorMotor.set(shooterMode.shooterPowers.accelerator());
+    serializerMotor.set(shooterMode.shooterPowers.serializerSpeed());
   }
 }

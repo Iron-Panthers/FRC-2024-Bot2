@@ -4,24 +4,28 @@
 
 package frc.robot.commands;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DrivebaseSubsystem;
+// import frc.robot.subsystems.ElevatorSubsystem;
 
-public class AutoAlignCommand extends Command {
-  DrivebaseSubsystem drivebaseSubsystem;
-  /** Creates a new AutoAlignCommand. */
-  public AutoAlignCommand(
-      DrivebaseSubsystem drivebaseSubsystem, AutoBuilder autoBuilder, Pose2d targetPose) {
-    this.drivebaseSubsystem = drivebaseSubsystem;
-    addRequirements(drivebaseSubsystem);
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ElevatorSubsystem;
+
+/** An example command that uses an example subsystem. */
+public class ElevatorHeightCommand extends Command {
+
+  ElevatorSubsystem elevatorSubsystem;
+  double height;
+
+  public ElevatorHeightCommand(ElevatorSubsystem elevatorSubsystem, double height) {
+    this.elevatorSubsystem = elevatorSubsystem;
+    this.height = height;
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drivebaseSubsystem.setDefenseMode();
+    elevatorSubsystem.setTargetHeight(height);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -35,6 +39,6 @@ public class AutoAlignCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return elevatorSubsystem.atTargetHeight();
   }
 }
