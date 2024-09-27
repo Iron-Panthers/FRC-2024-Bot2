@@ -43,7 +43,7 @@ public class UnloadShooterCommand extends Command {
     if (elevatorSubsystem.atTargetHeight() && pivotSubsystem.atTargetDegrees()) {
       shooterSubsystem.setShooterMode(ShooterMode.SHOOTER_UNLOAD);
     }
-      if (shooterSubsystem.isSerializerBeamBreakSensorTriggered() && pass == false) {
+    if (shooterSubsystem.isSerializerBeamBreakSensorTriggered() && pass == false) {
       pass = true;
     }
   }

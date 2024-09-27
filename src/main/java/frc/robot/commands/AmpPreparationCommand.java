@@ -23,9 +23,10 @@ public class AmpPreparationCommand extends SequentialCommandGroup {
     } else {
       addCommands(
           new UnloadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem)
-      .andThen(new IntakeCommand(
-        intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem))
-      .andThen(new ElevatorHeightCommand(elevatorSubsystem, Elevator.AMP_HEIGHT)));
+              .andThen(
+                  new IntakeCommand(
+                      intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem))
+              .andThen(new ElevatorHeightCommand(elevatorSubsystem, Elevator.AMP_HEIGHT)));
     }
   }
 }

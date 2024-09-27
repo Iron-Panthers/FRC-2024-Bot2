@@ -4,17 +4,18 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
+import java.util.function.DoubleSupplier;
 
 public class ManualElevatorCommand extends Command {
   /** Creates a new ManualElevatorCommand. */
   DoubleSupplier directionSupplier;
+
   ElevatorSubsystem elevatorSubsystem;
+
   public ManualElevatorCommand(
-    DoubleSupplier directionSupplier, ElevatorSubsystem elevatorSubsystem) {
+      DoubleSupplier directionSupplier, ElevatorSubsystem elevatorSubsystem) {
     this.directionSupplier = directionSupplier;
     this.elevatorSubsystem = elevatorSubsystem;
     addRequirements(elevatorSubsystem);
@@ -29,9 +30,7 @@ public class ManualElevatorCommand extends Command {
   @Override
   public void execute() {
     elevatorSubsystem.setTargetHeight(
-      elevatorSubsystem.getElevatorPosition()
-      +directionSupplier.getAsDouble());
-  
+        elevatorSubsystem.getElevatorPosition() + directionSupplier.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

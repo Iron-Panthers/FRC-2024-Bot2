@@ -36,6 +36,7 @@ import frc.robot.commands.AccelNoteCommand;
 import frc.robot.commands.AmpPreparationCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
+import frc.robot.commands.DrivebaseTargetLockCommand;
 import frc.robot.commands.HaltDriveCommandsCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LoadShooterCommand;
@@ -51,7 +52,6 @@ import frc.robot.commands.RotateVelocityDriveCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.StopIntakeCommand;
 import frc.robot.commands.StopShooterCommand;
-import frc.robot.commands.DrivebaseTargetLockCommand;
 import frc.robot.commands.VibrateHIDCommand;
 import frc.robot.subsystems.CANWatchdogSubsystem;
 import frc.robot.subsystems.DrivebaseSubsystem;
@@ -227,7 +227,7 @@ public class RobotContainer {
             translationXSupplier,
             translationYSupplier,
             // anthony.rightBumper(),
-            ()-> false));
+            () -> false));
 
     rgbSubsystem.setDefaultCommand(
         new RGBCommand(
@@ -359,7 +359,7 @@ public class RobotContainer {
                         intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // SHOOT OVERRIDE
-    
+
     // FIXME should be right trigger is move elevator up, left trigger is move elevator down
     jacob
         .rightTrigger()
@@ -370,21 +370,22 @@ public class RobotContainer {
     jacob
         .y()
         .whileTrue(
-            new DrivebaseTargetLockCommand(drivebaseSubsystem, translationXSupplier, translationYSupplier)
+            new DrivebaseTargetLockCommand(
+                    drivebaseSubsystem, translationXSupplier, translationYSupplier)
                 .alongWith(new PivotTargetLockCommand(pivotSubsystem, drivebaseSubsystem)));
 
     DoubleSupplier pivotManualRate = () -> modifyAxis(-jacob.getLeftY());
 
     new Trigger(() -> pivotManualRate.getAsDouble() > 0.07)
         .onTrue(new PivotManualCommand(pivotSubsystem, pivotManualRate));
-    
+
     DoubleSupplier elevatorDownSupplier = () -> modifyAxis(-jacob.getLeftTriggerAxis());
     DoubleSupplier elevatorUpSupplier = () -> modifyAxis(jacob.getLeftTriggerAxis());
 
-    new Trigger(() -> elevatorDownSupplier.getAsDouble()<-0.07)
+    new Trigger(() -> elevatorDownSupplier.getAsDouble() < -0.07)
         .onTrue(new ManualElevatorCommand(elevatorDownSupplier, elevatorSubsystem));
 
-    new Trigger(() -> elevatorUpSupplier.getAsDouble()>0.07)
+    new Trigger(() -> elevatorUpSupplier.getAsDouble() > 0.07)
         .onTrue(new ManualElevatorCommand(elevatorUpSupplier, elevatorSubsystem));
 
     // SOURCE
@@ -403,15 +404,9 @@ public class RobotContainer {
                         intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem)));
 
     // NOTE TO SHOOTER OR SERIALIZER
-    anthony
-        .b()
-        .onTrue(
-            new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
+    anthony.b().onTrue(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
 
-    jacob
-        .b()
-        .onTrue(
-            new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
+    jacob.b().onTrue(new LoadShooterCommand(shooterSubsystem, pivotSubsystem, elevatorSubsystem));
     jacob
         .a()
         .onTrue(
@@ -419,7 +414,9 @@ public class RobotContainer {
                     drivebaseSubsystem,
                     translationXSupplier,
                     translationYSupplier,
-                    DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50) // FIXME confirm angles
+                    DriverStation.getAlliance().get().equals(Alliance.Red)
+                        ? -50
+                        : 50) // FIXME confirm angles
                 .alongWith(
                     new AmpPreparationCommand(
                         pivotSubsystem, elevatorSubsystem, shooterSubsystem, intakeSubsystem)));
@@ -439,29 +436,23 @@ public class RobotContainer {
                     drivebaseSubsystem,
                     translationXSupplier,
                     translationYSupplier,
-                    DriverStation.getAlliance().get().equals(Alliance.Red) ? -50 : 50) // FIXME confirm angles
+                    DriverStation.getAlliance().get().equals(Alliance.Red)
+                        ? -50
+                        : 50) // FIXME confirm angles
                 .alongWith(
                     new AmpPreparationCommand(
                         pivotSubsystem, elevatorSubsystem, shooterSubsystem, intakeSubsystem)));
-    
-    //PIVOT SETPOINTS
-    anthony
-        .povUp().onTrue(
-            new PivotAngleCommand(pivotSubsystem, 30));
 
-    anthony
-        .povLeft().onTrue(
-            new PivotAngleCommand(pivotSubsystem, 60));
+    // PIVOT SETPOINTS
+    anthony.povUp().onTrue(new PivotAngleCommand(pivotSubsystem, 30));
 
-    anthony
-        .povRight().onTrue(
-            new PivotAngleCommand(pivotSubsystem, 75));
+    anthony.povLeft().onTrue(new PivotAngleCommand(pivotSubsystem, 60));
 
-    anthony
-        .povDown().onTrue(
-            new PivotAngleCommand(pivotSubsystem, 55));
-    
-    //TRAP CLIMB STUFF
+    anthony.povRight().onTrue(new PivotAngleCommand(pivotSubsystem, 75));
+
+    anthony.povDown().onTrue(new PivotAngleCommand(pivotSubsystem, 55));
+
+    // TRAP CLIMB STUFF
     // jacob.
     //     povCenter().onTrue();
 

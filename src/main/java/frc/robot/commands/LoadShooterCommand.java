@@ -20,7 +20,6 @@ public class LoadShooterCommand extends Command {
   PivotSubsystem pivotSubsystem;
 
   /** Use PivotAndElevatorTransferCommand before running */
-
   public LoadShooterCommand(
       ShooterSubsystem shooterSubsystem,
       PivotSubsystem pivotSubsystem,
