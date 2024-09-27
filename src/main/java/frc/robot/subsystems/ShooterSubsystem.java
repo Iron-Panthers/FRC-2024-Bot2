@@ -83,8 +83,8 @@ public class ShooterSubsystem extends SubsystemBase {
     pivotAcceleratorMotor = new TalonFX(Shooter.Ports.ACCELERATOR_MOTOR_PORT);
     serializerMotor = new TalonFX(Intake.Ports.SERIALIZER_MOTOR_PORT);
 
-    shooterSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
-    serializerSensor = new DigitalInput(Shooter.Ports.BEAM_BREAK_SENSOR_PORT);
+    shooterSensor = new DigitalInput(Shooter.Ports.SHOOTER_BEAM_BREAK_SENSOR_PORT);
+    serializerSensor = new DigitalInput(Shooter.Ports.SERIALIZER_BEAM_BREAK_SENSOR_PORT);
 
     pivotShooterBottomMotor.clearStickyFaults();
     pivotAcceleratorMotor.clearStickyFaults();

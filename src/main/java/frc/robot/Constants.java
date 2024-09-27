@@ -187,7 +187,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? 0.41943359375 // comp bot offset
+                ? 0.29443359375 // comp bot offset
                 : 0.0595703125; // practice bot offset
       }
 
@@ -198,7 +198,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -0.39990234375 // comp bot offset
+                ? -0.22705078125 // comp bot offset
                 : 0.262451171875; // practice bot offset
       }
 
@@ -209,7 +209,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? 0.225341796875 // comp bot offset
+                ? -0.1884765625 // comp bot offset
                 : -0.20825195312; // practice bot offset
       }
 
@@ -220,7 +220,7 @@ public final class Constants {
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? 0.316650390625 // comp bot offset
+                ? -0.12744140625 // comp bot offset
                 : -0.3564453125 + 180; // practice bot offset
       }
     }
@@ -255,7 +255,8 @@ public final class Constants {
       public static final int TOP_SHOOTER_MOTOR_PORT = 0;
       public static final int BOTTOM_SHOOTER_MOTOR_PORT = 5;
       public static final int ACCELERATOR_MOTOR_PORT = 17;
-      public static final int BEAM_BREAK_SENSOR_PORT = 8;
+      public static final int SHOOTER_BEAM_BREAK_SENSOR_PORT = 8;
+      public static final int SERIALIZER_BEAM_BREAK_SENSOR_PORT = 6;
     }
 
     public static final class Modes {
