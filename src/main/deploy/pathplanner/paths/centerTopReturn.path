@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Ethan's Paths",
+  "folder": null,
   "previewStartingState": {
     "rotation": -0.6585431775635988,
     "velocity": 0
