@@ -163,7 +163,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
               Modules.Module2.STEER_OFFSET,
               Dims.TRACKWIDTH_METERS / 2.0,
               Dims.TRACKWIDTH_METERS / 2.0,
-              false);
+              true);
 
       // module wheel positions taken from kinematics object
       final SwerveModuleConstants frontRight =
@@ -174,7 +174,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
               Modules.Module1.STEER_OFFSET,
               Dims.TRACKWIDTH_METERS / 2.0,
               -Dims.TRACKWIDTH_METERS / 2.0,
-              true);
+              false);
 
       // module wheel positions taken from kinematics object
       final SwerveModuleConstants backLeft =
@@ -185,7 +185,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
               Modules.Module4.STEER_OFFSET,
               -Dims.TRACKWIDTH_METERS / 2.0,
               Dims.TRACKWIDTH_METERS / 2.0,
-              false);
+              true);
 
       // module wheel positions taken from kinematics object
       final SwerveModuleConstants backRight =
@@ -196,7 +196,7 @@ public class DrivebaseSubsystem extends SubsystemBase {
               Modules.Module3.STEER_OFFSET,
               -Dims.TRACKWIDTH_METERS / 2.0,
               -Dims.TRACKWIDTH_METERS / 2.0,
-              true);
+              false);
 
       swerveDrivetrain =
           new SwerveDrivetrain(
