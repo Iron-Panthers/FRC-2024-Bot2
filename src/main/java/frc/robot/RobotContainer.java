@@ -33,6 +33,7 @@ import frc.robot.Constants.Drive.Setpoints;
 import frc.robot.autonomous.HeadingAngle;
 import frc.robot.autonomous.HeadingTargetLock;
 import frc.robot.commands.AccelNoteCommand;
+import frc.robot.commands.AdvancedIntakeCommand;
 import frc.robot.commands.AmpPreparationCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefenseModeCommand;
@@ -339,7 +340,7 @@ public class RobotContainer {
     anthony
         .leftBumper()
         .onTrue(
-            new IntakeCommand(
+            new AdvancedIntakeCommand(
                 intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem));
 
     jacob

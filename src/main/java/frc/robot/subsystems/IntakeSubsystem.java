@@ -43,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.clearStickyFaults();
 
     intakeMotor.setNeutralMode(NeutralModeValue.Brake);
-    intakeMotor.setInverted(true);
+    intakeMotor.setInverted(false);
 
     intakeMode = IntakeMode.HOLD;
 

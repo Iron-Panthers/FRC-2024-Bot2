@@ -46,6 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public enum ShooterMode {
     INTAKE(Shooter.Modes.INTAKE),
+    SERIALIZER_BACKUP(Shooter.Modes.SERIALIZER_BACKUP),
     IDLE(Shooter.Modes.IDLE),
     RAMP_SPEAKER(Shooter.Modes.RAMP_SPEAKER),
     SHOOT_SPEAKER(Shooter.Modes.SHOOT_SPEAKER),
@@ -106,7 +107,8 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMode = ShooterMode.IDLE;
 
     if (Config.SHOW_SHUFFLEBOARD_DEBUG_DATA) {
-      shooterTab.addBoolean("Sensor Input", this::isShooterBeamBreakSensorTriggered);
+      shooterTab.addBoolean("Shooter Sensor Input", this::isShooterBeamBreakSensorTriggered);
+      shooterTab.addBoolean("Serializer Sensor Input", this::isSerializerBeamBreakSensorTriggered);
       shooterTab
           .addDouble(
               "Top Roller Velocity (RPS)",
@@ -162,13 +164,12 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isShooterBeamBreakSensorTriggered() {
-    return shooterSensor.get();
+    return !shooterSensor.get();
   }
 
   public boolean isSerializerBeamBreakSensorTriggered() {
     // if is triggered return true
-    // return serializerSensor.get();
-    return false; //FIXME
+    return !serializerSensor.get();
   }
 
   public boolean isReadyToShootSpeaker() {

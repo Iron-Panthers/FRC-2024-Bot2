@@ -241,7 +241,7 @@ public final class Constants {
     }
 
     public static final class Modes {
-      public static final IntakePowers INTAKE = new IntakePowers(.95);
+      public static final IntakePowers INTAKE = new IntakePowers(.4);
       public static final IntakePowers HOLD = new IntakePowers(0);
       public static final IntakePowers REVERSE = new IntakePowers(-.5);
     }
@@ -254,13 +254,15 @@ public final class Constants {
       public static final int TOP_SHOOTER_MOTOR_PORT = 15;
       public static final int BOTTOM_SHOOTER_MOTOR_PORT = 16;
       public static final int ACCELERATOR_MOTOR_PORT = 14;
-      public static final int SHOOTER_BEAM_BREAK_SENSOR_PORT = 22;
-      public static final int SERIALIZER_BEAM_BREAK_SENSOR_PORT = 21;
+      public static final int SHOOTER_BEAM_BREAK_SENSOR_PORT = 8;
+      public static final int SERIALIZER_BEAM_BREAK_SENSOR_PORT = 9;
     }
 
     public static final class Modes {
       public static final ShooterSubsystem.ShooterPowers INTAKE =
-          new ShooterSubsystem.ShooterPowers(0, 1, 0, 0.5);
+          new ShooterSubsystem.ShooterPowers(0, 1, 0.1, 0.3);
+      public static final ShooterSubsystem.ShooterPowers SERIALIZER_BACKUP = 
+          new ShooterSubsystem.ShooterPowers(0, 1, 0, -0.3);
       public static final ShooterSubsystem.ShooterPowers IDLE =
           new ShooterSubsystem.ShooterPowers(0, 0, 0, 0);
       public static final ShooterSubsystem.ShooterPowers RAMP_AMP =
