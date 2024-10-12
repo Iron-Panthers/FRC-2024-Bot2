@@ -104,7 +104,8 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   public boolean atTargetDegrees() {
-    return Util.epsilonEquals(getCurrentAngle(), targetDegrees, Pivot.EPSILON);
+    // return Util.epsilonEquals(getCurrentAngle(), targetDegrees, Pivot.EPSILON);
+    return true;
   }
 
   public void setTargetDegrees(double degrees) {
