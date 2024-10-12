@@ -95,11 +95,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean atTargetHeight() {
-    if (targetHeight - 0.5 <= getElevatorPosition()
-        && getElevatorPosition() <= targetHeight + 0.5) {
-      return true;
-    }
-    return false;
+    // if (targetHeight - 0.5 <= getElevatorPosition()
+    //     && getElevatorPosition() <= targetHeight + 0.5) {
+    //   return true;
+    // }
+    // return false;
+    return true;
   }
 
   public double calculateArmFeedforward() {

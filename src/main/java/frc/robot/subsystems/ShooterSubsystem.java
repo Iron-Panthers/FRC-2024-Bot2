@@ -167,7 +167,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public boolean isSerializerBeamBreakSensorTriggered() {
     // if is triggered return true
-    return serializerSensor.get();
+    // return serializerSensor.get();
+    return false; //FIXME
   }
 
   public boolean isReadyToShootSpeaker() {
