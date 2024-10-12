@@ -137,24 +137,24 @@ public final class Constants {
      * steer is always left
      * from corner perspective
      *
-     * robot visualization:
-     * |──────────────────────|
-     * │2 10 04 1│
-     * │ 25 24 │
-     * │11 S D 03│
-     * │ D S │
-     * │ │
-     * │ │
-     * │ S D │
-     * │ D S │
-     * │12 |────────| 02│
-     * │ 26 │ │ 27 │
-     * │3 13│ batt │01 4│
-     * |──────┴───┬┬───┴──────|
-     * ││
-     * ││
-     * ▼▼
-     * software front
+     *  robot visualization:
+      |──────────────────────|
+      │4   10          11   3│
+      │  04              03  │
+      │09     S      D     12│
+      │     D          S     │
+      │                      │
+      │                      │
+      │     S          D     │
+      │       D      S       │
+      │08    |────────|    05│
+      │  02  │        │  01  │
+      │2   07│  batt  │06   1│
+      |──────┴───┬┬───┴──────|
+                 ││
+                 ││
+                 ▼▼
+           software front
      */
 
     public static final class Modules {
@@ -164,14 +164,14 @@ public final class Constants {
         public static final double DRIVE_GEAR_RATIO = 5.357142857142857;
         public static final double STEER_GEAR_RATIO = 21.428571428571427;
         public static final Slot0Configs DRIVE_MOTOR_GAINS =
-            new Slot0Configs().withKP(3).withKI(0).withKD(0).withKS(0.32).withKV(0.11).withKA(0);
+            new Slot0Configs().withKP(3).withKI(0).withKD(0).withKS(0.21).withKV(0.694).withKA(0);
         public static final Slot0Configs STEER_MOTOR_GAINS =
-            new Slot0Configs().withKP(11).withKI(0).withKD(0).withKS(0.4).withKV(0.6).withKA(0);
+            new Slot0Configs().withKP(11).withKI(0).withKD(0).withKS(0.17).withKV(2.5).withKA(0);
         public static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT =
             ClosedLoopOutputType.Voltage;
         public static final ClosedLoopOutputType STEER_CLOSED_LOOP_OUTPUT =
             ClosedLoopOutputType.Voltage;
-        public static final SteerFeedbackType FEEDBACK_SOURCE = SteerFeedbackType.FusedCANcoder;
+        public static final SteerFeedbackType FEEDBACK_SOURCE = SteerFeedbackType.RemoteCANcoder;
         public static final double SPEED_TWELVE_VOLTS = MAX_VELOCITY_METERS_PER_SECOND;
         public static final double SLIP_CURRENT = 0; // optional, unused rn
         public static final boolean STEER_MOTOR_INVERTED = true;
@@ -180,48 +180,48 @@ public final class Constants {
         public static final SteerRequestType steerRequestType = SteerRequestType.MotionMagic;
       }
 
-      public static final class Module1 { // back left
-        public static final int DRIVE_MOTOR = CAN.at(4, "module 1 drive motor");
-        public static final int STEER_MOTOR = CAN.at(3, "module 1 steer motor");
-        public static final int STEER_ENCODER = CAN.at(24, "module 1 steer encoder");
+      public static final class Module2 { // front left
+        public static final int DRIVE_MOTOR = CAN.at(6, "module 1 drive motor");
+        public static final int STEER_MOTOR = CAN.at(5, "module 1 steer motor");
+        public static final int STEER_ENCODER = CAN.at(1, "module 1 steer encoder");
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? 0.29443359375 // comp bot offset
-                : 0.0595703125; // practice bot offset
+                ? -0.185546875 // comp bot offset
+                : -0.185302734375; // practice bot offset
       }
 
-      public static final class Module2 { // back right
-        public static final int DRIVE_MOTOR = CAN.at(11, "module 2 drive motor");
-        public static final int STEER_MOTOR = CAN.at(10, "module 2 steer motor");
-        public static final int STEER_ENCODER = CAN.at(25, "module 2 steer encoder");
+      public static final class Module1 { // front right
+        public static final int DRIVE_MOTOR = CAN.at(7, "module 2 drive motor");
+        public static final int STEER_MOTOR = CAN.at(8, "module 2 steer motor");
+        public static final int STEER_ENCODER = CAN.at(2, "module 2 steer encoder");
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -0.22705078125 // comp bot offset
-                : 0.262451171875; // practice bot offset
+                ? -0.127197265625 // comp bot offset
+                : -0.127685546875; // practice bot offset
       }
 
-      public static final class Module3 { // front right
-        public static final int DRIVE_MOTOR = CAN.at(13, "module 3 drive motor");
-        public static final int STEER_MOTOR = CAN.at(12, "module 3 steer motor");
-        public static final int STEER_ENCODER = CAN.at(26, "module 3 steer encoder");
+      public static final class Module4 { // back left
+        public static final int DRIVE_MOTOR = CAN.at(12, "module 3 drive motor");
+        public static final int STEER_MOTOR = CAN.at(11, "module 3 steer motor");
+        public static final int STEER_ENCODER = CAN.at(3, "module 3 steer encoder");
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -0.1884765625 // comp bot offset
-                : -0.20825195312; // practice bot offset
+                ? -0.227783203125 // comp bot offset
+                : -0.228759765625; // practice bot offset
       }
 
-      public static final class Module4 { // front left
-        public static final int DRIVE_MOTOR = CAN.at(2, "module 4 drive motor");
-        public static final int STEER_MOTOR = CAN.at(1, "module 4 steer motor");
-        public static final int STEER_ENCODER = CAN.at(27, "module 4 steer encoder");
+      public static final class Module3 { // back right
+        public static final int DRIVE_MOTOR = CAN.at(10, "module 4 drive motor");
+        public static final int STEER_MOTOR = CAN.at(9, "module 4 steer motor");
+        public static final int STEER_ENCODER = CAN.at(4, "module 4 steer encoder");
 
         public static final double STEER_OFFSET =
             IS_COMP_BOT
-                ? -0.12744140625 // comp bot offset
-                : -0.3564453125 + 180; // practice bot offset
+                ? 0.294189453125 // comp bot offset
+                : 0.2939453125; // practice bot offset
       }
     }
 
@@ -236,9 +236,8 @@ public final class Constants {
 
   public static final class Intake {
     public static final class Ports {
-      public static final int INTAKE_MOTOR_PORT = 15;
-      public static final int SERIALIZER_MOTOR_PORT = 16;
-      public static final int INTAKE_SENSOR_PORT = 9;
+      public static final int INTAKE_MOTOR_PORT = 13;
+      public static final int SERIALIZER_MOTOR_PORT = 20;
     }
 
     public static final class Modes {
@@ -252,11 +251,11 @@ public final class Constants {
 
   public static final class Shooter {
     public static final class Ports {
-      public static final int TOP_SHOOTER_MOTOR_PORT = 0;
-      public static final int BOTTOM_SHOOTER_MOTOR_PORT = 5;
-      public static final int ACCELERATOR_MOTOR_PORT = 17;
-      public static final int SHOOTER_BEAM_BREAK_SENSOR_PORT = 8;
-      public static final int SERIALIZER_BEAM_BREAK_SENSOR_PORT = 6;
+      public static final int TOP_SHOOTER_MOTOR_PORT = 15;
+      public static final int BOTTOM_SHOOTER_MOTOR_PORT = 16;
+      public static final int ACCELERATOR_MOTOR_PORT = 14;
+      public static final int SHOOTER_BEAM_BREAK_SENSOR_PORT = 22;
+      public static final int SERIALIZER_BEAM_BREAK_SENSOR_PORT = 21;
     }
 
     public static final class Modes {
@@ -296,8 +295,8 @@ public final class Constants {
 
   public static final class Pivot {
     public static final class Ports {
-      public static final int PIVOT_MOTOR_PORT = 18;
-      public static final int CANCODER_PORT = 28;
+      public static final int PIVOT_MOTOR_PORT = 17;
+      public static final int CANCODER_PORT = 23;
       public static final int INDUCTIVE_PROXIMITY_SENSOR_PORT = 40;
     }
 

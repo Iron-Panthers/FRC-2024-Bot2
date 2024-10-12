@@ -157,10 +157,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
       // module wheel positions taken from kinematics object
       final SwerveModuleConstants frontLeft =
           swerveModuleConstantsFactory.createModuleConstants(
-              Modules.Module4.STEER_MOTOR,
-              Modules.Module4.DRIVE_MOTOR,
-              Modules.Module4.STEER_ENCODER,
-              Modules.Module4.STEER_OFFSET,
+              Modules.Module2.STEER_MOTOR,
+              Modules.Module2.DRIVE_MOTOR,
+              Modules.Module2.STEER_ENCODER,
+              Modules.Module2.STEER_OFFSET,
               Dims.TRACKWIDTH_METERS / 2.0,
               Dims.TRACKWIDTH_METERS / 2.0,
               false);
@@ -168,10 +168,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
       // module wheel positions taken from kinematics object
       final SwerveModuleConstants frontRight =
           swerveModuleConstantsFactory.createModuleConstants(
-              Modules.Module3.STEER_MOTOR,
-              Modules.Module3.DRIVE_MOTOR,
-              Modules.Module3.STEER_ENCODER,
-              Modules.Module3.STEER_OFFSET,
+              Modules.Module1.STEER_MOTOR,
+              Modules.Module1.DRIVE_MOTOR,
+              Modules.Module1.STEER_ENCODER,
+              Modules.Module1.STEER_OFFSET,
               Dims.TRACKWIDTH_METERS / 2.0,
               -Dims.TRACKWIDTH_METERS / 2.0,
               true);
@@ -179,10 +179,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
       // module wheel positions taken from kinematics object
       final SwerveModuleConstants backLeft =
           swerveModuleConstantsFactory.createModuleConstants(
-              Modules.Module1.STEER_MOTOR,
-              Modules.Module1.DRIVE_MOTOR,
-              Modules.Module1.STEER_ENCODER,
-              Modules.Module1.STEER_OFFSET,
+              Modules.Module4.STEER_MOTOR,
+              Modules.Module4.DRIVE_MOTOR,
+              Modules.Module4.STEER_ENCODER,
+              Modules.Module4.STEER_OFFSET,
               -Dims.TRACKWIDTH_METERS / 2.0,
               Dims.TRACKWIDTH_METERS / 2.0,
               false);
@@ -190,10 +190,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
       // module wheel positions taken from kinematics object
       final SwerveModuleConstants backRight =
           swerveModuleConstantsFactory.createModuleConstants(
-              Modules.Module2.STEER_MOTOR,
-              Modules.Module2.DRIVE_MOTOR,
-              Modules.Module2.STEER_ENCODER,
-              Modules.Module2.STEER_OFFSET,
+              Modules.Module3.STEER_MOTOR,
+              Modules.Module3.DRIVE_MOTOR,
+              Modules.Module3.STEER_ENCODER,
+              Modules.Module3.STEER_OFFSET,
               -Dims.TRACKWIDTH_METERS / 2.0,
               -Dims.TRACKWIDTH_METERS / 2.0,
               true);
@@ -262,10 +262,10 @@ public class DrivebaseSubsystem extends SubsystemBase {
           () ->
               -Util.relativeAngularDifference(getDriverGyroscopeRotation().times(-1), targetAngle));
 
-      addSwerveShuffleboard("module 4", 0, swerveModules, tab);
-      addSwerveShuffleboard("module 3", 1, swerveModules, tab);
-      addSwerveShuffleboard("module 1", 2, swerveModules, tab);
-      addSwerveShuffleboard("module 2", 3, swerveModules, tab);
+      addSwerveShuffleboard("module 2", 0, swerveModules, tab);
+      addSwerveShuffleboard("module 1", 1, swerveModules, tab);
+      addSwerveShuffleboard("module 4", 2, swerveModules, tab);
+      addSwerveShuffleboard("module 3", 3, swerveModules, tab);
     }
 
     Shuffleboard.getTab("DriverView").add(field).withPosition(0, 0).withSize(8, 5);
