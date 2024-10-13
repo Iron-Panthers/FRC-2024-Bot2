@@ -11,6 +11,7 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterMode;
 public class SerializerBackupCommand extends Command {
   /** Creates a new SerializerBackupCommand. */
   ShooterSubsystem shooterSubsystem;
+  double serializerPos;
   public SerializerBackupCommand(ShooterSubsystem shooterSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.shooterSubsystem = shooterSubsystem;
@@ -21,6 +22,7 @@ public class SerializerBackupCommand extends Command {
   @Override
   public void initialize() {
     shooterSubsystem.setShooterMode(ShooterMode.SERIALIZER_BACKUP);
+    serializerPos = shooterSubsystem.getSerializerPositon();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -29,11 +31,13 @@ public class SerializerBackupCommand extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooterSubsystem.setShooterMode(ShooterMode.IDLE);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return serializerPos - 0.5 > shooterSubsystem.getSerializerPositon();
   }
 }

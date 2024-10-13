@@ -156,6 +156,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterMode;
   }
 
+  public double getSerializerPositon(){
+    return serializerMotor.getRotorPosition().getValueAsDouble();
+  }
+
   public boolean isShooterUpToSpeed() {
     return pivotShooterTopMotor.getVelocity().getValueAsDouble()
             >= Shooter.SHOOTER_VELOCITY_THRESHOLD

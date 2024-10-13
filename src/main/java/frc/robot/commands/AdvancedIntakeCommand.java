@@ -18,8 +18,6 @@ public class AdvancedIntakeCommand extends SequentialCommandGroup {
     addCommands(
         new IntakeCommand(intakeSubsystem, shooterSubsystem, pivotSubsystem, elevatorSubsystem),
         new ParallelCommandGroup(
-            new SerializerBackupCommand(shooterSubsystem)
-                .withTimeout(0.04)
-                .andThen(new StopShooterCommand(shooterSubsystem))));
+            new SerializerBackupCommand(shooterSubsystem)));
   }
 }
